@@ -1,4 +1,4 @@
-# api_juceshop_tests.py
+# test_api_juceshop.py
 from test_automation_framework.api.api_service import AuthAPI, BasketAPI, generate_random_email
 
 
