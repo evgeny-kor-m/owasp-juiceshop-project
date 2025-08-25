@@ -1,0 +1,59 @@
+# .gitignore
+
+# Generated Python files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python/
+env/
+venv/
+.venv/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Logs and reports
+logs/
+reports/
+allure-results/
+allure-report/
+screenshots/
+*.log
+*.tmp
+
+# Docker
+*.swp
+*.bak
+*.swo
+.dockerignore # Is usually not ignored, but if there are specific reasons
+*.DS_Store # macOS
+Thumbs.db # Windows
+
+# Executable files and scripts (for example, your .bat files)
+#*.bat
+#*.sh
+*.exe
+*.dll
+*.so
+*.dylib
+
+# IDE and editors
+.idea/ # IntelliJ / PyCharm
+.vscode/ # VS Code
+.sublime-workspace
+.project
+.classpath
+.settings/
+
+# Configuration files specific to the user/environment
+.env
+.flaskenv
+*.local
+config.yaml.local # If you have local reduction config.yaml
+
+# K3D и Kubernetes
+.kube/config # If you accidentally copied it into the root of the project
+k3d-* # Temporary files K3D
