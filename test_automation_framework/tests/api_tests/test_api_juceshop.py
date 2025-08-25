@@ -1,6 +1,12 @@
 # test_api_juceshop.py
 from test_automation_framework.api.api_service import AuthAPI, BasketAPI, generate_random_email
+import sys
+import os
 
+# Get the absolute path of the project root directory
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..'))
+# Add the project root to the Python path
+sys.path.insert(0, project_root)
 
 def test_full_e2e_flow_with_api(base_url, api_session):
     """
