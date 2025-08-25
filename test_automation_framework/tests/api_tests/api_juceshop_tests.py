@@ -1,6 +1,7 @@
 # api_juceshop_tests.py
-
 from test_automation_framework.api.api_service import AuthAPI, BasketAPI, generate_random_email
+
+
 def test_full_e2e_flow_with_api(base_url, api_session):
     """
     Тестирование полного End-to-End потока с использованием API.
