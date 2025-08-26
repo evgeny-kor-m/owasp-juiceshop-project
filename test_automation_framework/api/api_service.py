@@ -27,7 +27,8 @@ class AuthAPI:
             "securityQuestion": {"id": 1},
             "securityAnswer": security_answer
         }
-        response = self.session.post(f"{self.base_url}/api/Users/", json=registration_payload)
+        headers = {'Host': 'juice-shop.local', 'Content-Type': 'application/json'}
+        response = self.session.post(f"{self.base_url}/api/Users/", json=registration_payload, headers=headers)
         return response
 
     def login_with_creds(self, email, password):
