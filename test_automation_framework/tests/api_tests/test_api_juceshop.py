@@ -22,6 +22,7 @@ def test_full_e2e_flow_with_api(base_url, api_session):
     login_response = auth_api.login_with_creds(new_email, password)
     assert login_response.status_code == 200, f"Вход не удался: {login_response.status_code}"
     basket_id = login_response.json().get("authentication", {}).get("bid")
+    print(f"    Успешный вход в систему. Json: {login_response.json()}")
     assert basket_id is not None, "ID корзины не получен после входа."
     print(f"    Успешный вход в систему. ID корзины получен - {basket_id}")
 
