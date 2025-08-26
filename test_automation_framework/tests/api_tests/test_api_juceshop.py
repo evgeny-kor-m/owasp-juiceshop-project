@@ -5,11 +5,12 @@ def test_full_e2e_flow_with_api(base_url, api_session):
     """
     Тестирование полного End-to-End потока с использованием API.
     """
+    BASE_URL = "http://localhost:3000"
     print("\n--- Запуск E2E-теста для OWASP Juice Shop (с API) ---")
 
     # Шаг 1: Регистрация нового пользователя
     print("1. Регистрация нового пользователя...")
-    auth_api = AuthAPI(api_session, base_url)
+    auth_api = AuthAPI(api_session, BASE_URL)
     new_email = generate_random_email()
     password = "MyStrongPassword123"
     register_response = auth_api.register_new_user(new_email, password)
