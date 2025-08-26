@@ -47,6 +47,7 @@ class BasketAPI:
     """Сервисный слой для взаимодействия с API корзины."""
     def __init__(self, session, base_url, basket_id):
         self.session = session
+        self.session.headers.update({'Host': 'juice-shop.local'})
         self.base_url = base_url
         self.basket_id = basket_id
 
