@@ -14,9 +14,13 @@ def generate_random_email():
 
 class AuthAPI:
     """Сервисный слой для взаимодействия с API аутентификации."""
+    headers = {'Host': 'juice-shop.local',
+               'Content-Type': 'application/json'}
+
     def __init__(self, session, base_url):
-        self.session = session
-        self.base_url = base_url
+            self.session = session
+            self.base_url = base_url
+            self.session.headers.update({'Host': 'juice-shop.local'})
 
     def register_new_user(self, email, password, security_answer="This is my favorite fruit"):
         """Выполняет регистрацию нового пользователя."""
@@ -27,8 +31,7 @@ class AuthAPI:
             "securityQuestion": {"id": 1},
             "securityAnswer": security_answer
         }
-        headers = {'Host': 'juice-shop.local', 'Content-Type': 'application/json'}
-        response = self.session.post(f"{self.base_url}/api/Users/", json=registration_payload, headers=headers)
+        response = self.session.post(f"{self.base_url}/api/Users/", json=registration_payload)
         return response
 
     def login_with_creds(self, email, password):
