@@ -33,7 +33,7 @@ def test_full_e2e_flow_with_api(base_url, api_session):
     print("3. Добавление товара в корзину...")
     product_id = 1
     add_item_response = basket_api.add_item_to_basket(product_id)
-    assert add_item_response.status_code == 201, f"Не удалось добавить товар в корзину: {add_item_response.status_code}, {add_item_response}"
+    assert add_item_response.status_code == 201, f"Не удалось добавить товар в корзину: {add_item_response.status_code}, {add_item_response.json()}"
     print(f"    Товар (ID: {product_id}) успешно добавлен в корзину.")
 
     # Шаг 4: Проверка, что товар в корзине
