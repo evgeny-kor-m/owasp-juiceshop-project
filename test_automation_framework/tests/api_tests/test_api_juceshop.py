@@ -23,7 +23,7 @@ def test_full_e2e_flow_with_api(base_url, api_session):
     assert login_response.status_code == 200, f"Вход не удался: {login_response.status_code}"
     basket_id = login_response.json().get("authentication", {}).get("bid")
     assert basket_id is not None, "ID корзины не получен после входа."
-    print("    Успешный вход в систему. ID корзины получен.")
+    print(f"    Успешный вход в систему. ID корзины получен - {basket_id}")
 
     # Создание объекта корзины после входа
     basket_api = BasketAPI(api_session, base_url, basket_id)
@@ -32,7 +32,7 @@ def test_full_e2e_flow_with_api(base_url, api_session):
     print("3. Добавление товара в корзину...")
     product_id = 1
     add_item_response = basket_api.add_item_to_basket(product_id)
-    assert add_item_response.status_code == 201, f"Не удалось добавить товар в корзину: {add_item_response.status_code}"
+    assert add_item_response.status_code == 201, f"Не удалось добавить товар в корзину: {add_item_response.status_code}, {add_item_response}"
     print(f"    Товар (ID: {product_id}) успешно добавлен в корзину.")
 
     # Шаг 4: Проверка, что товар в корзине
