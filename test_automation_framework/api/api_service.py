@@ -20,7 +20,6 @@ class AuthAPI:
     def __init__(self, session, base_url):
             self.session = session
             self.base_url = base_url
-            self.session.headers.update({'Host': 'juice-shop.local'})
 
     def register_new_user(self, email, password, security_answer="This is my favorite fruit"):
         """Выполняет регистрацию нового пользователя."""
@@ -47,7 +46,6 @@ class BasketAPI:
     """Сервисный слой для взаимодействия с API корзины."""
     def __init__(self, session, base_url, basket_id):
         self.session = session
-        self.session.headers.update({'Host': 'juice-shop.local'})
         self.base_url = base_url
         self.basket_id = basket_id
 
