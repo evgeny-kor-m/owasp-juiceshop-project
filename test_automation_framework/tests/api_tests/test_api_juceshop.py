@@ -5,7 +5,7 @@ def test_full_e2e_flow_with_api(base_url, api_session):
     """
     Тестирование полного End-to-End потока с использованием API.
     """
-    BASE_URL = "http://localhost:3000"
+    BASE_URL = "http://host.docker.internal:8080"
     print("\n--- Запуск E2E-теста для OWASP Juice Shop (с API) ---")
 
     # Шаг 1: Регистрация нового пользователя
