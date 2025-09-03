@@ -35,6 +35,7 @@ run: ## Run the container interactive. Wedding mode (-rm deleys the container af
 	@echo "$(YELLOW)🚀 Запуск контейнера $(CONTAINER_NAME)...$(NC)"
 	docker-compose -f $(COMPOSE_FILE) run --rm $(CONTAINER_NAME)
 
+
 # === debugging ===
 shell: ## enter the container
 	@echo "$(YELLOW)🐚 Вход в контейнер...$(NC)"
