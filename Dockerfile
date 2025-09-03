@@ -6,7 +6,7 @@ FROM python:3.12-slim
 RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     curl \
-    openjdk-17-jdk \
+    openjdk-20-jdk \
     # Clean the APT-GET cache to reduce the size of the image
     && rm -rf /var/lib/apt/lists/*
 
