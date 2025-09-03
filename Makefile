@@ -21,6 +21,15 @@ help: ## show the certificate. Disputes a list of all available commands with th
 	@echo "$(BLUE)Доступные команды:$(NC)"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-20s$(NC) %s\n", $$1, $$2}'
 
+# === Basic teams ===
+build: ## Collect Docker image. For everyday development, to use the Docker cache by default, which will significantly speed up repeated assemblies.
+	@echo "$(YELLOW)🏗️ Сборка Docker образа $(IMAGE_NAME)...$(NC)"
+	docker-compose -f $(COMPOSE_FILE) build
+
+build-nocache: ## Collect Docker image. [-NO-CACHE] makes doCker rebuild all layers, ignoring the cache, which is useful to ensure fresh assembly, but can be slower.
+	@echo "$(YELLOW)🏗️ Сборка Docker образа $(IMAGE_NAME)...$(NC)"
+	docker-compose -f $(COMPOSE_FILE) build --no-cache
+
 run: ## Run the container interactive. Wedding mode (-rm deleys the container after completion).
 	@echo "$(YELLOW)🚀 Запуск контейнера $(CONTAINER_NAME)...$(NC)"
 	docker-compose -f $(COMPOSE_FILE) run --rm $(CONTAINER_NAME)
