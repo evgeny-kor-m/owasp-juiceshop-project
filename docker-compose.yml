@@ -1,6 +1,6 @@
 services:
   # Сервис для запуска вашего фреймворка автоматизации
-  test_runner:
+  test-runner:
     build:
       context: .
       dockerfile: Dockerfile
