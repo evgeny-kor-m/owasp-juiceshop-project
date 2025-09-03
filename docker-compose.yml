@@ -1,0 +1,10 @@
+services:
+  # Сервис для запуска вашего фреймворка автоматизации
+  test_runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: test-runner:latest # We obviously indicate the name of the image so that there is no "Testing-lab-Project-ROT-App-Testing"
+    container_name: test-runner
+    volumes:
+      - .:/app
