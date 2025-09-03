@@ -1,12 +1,12 @@
 # Dockerfile
 # Используем официальный образ Python как базовый
-FROM python:3.12-slim
+FROM python:3.12-slim-bookworm
 
 # wget for downloading files, curl for general networking, and openjdk for allure
 RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     curl \
-    openjdk-20-jdk \
+    openjdk-17-jdk \
     # Clean the APT-GET cache to reduce the size of the image
     && rm -rf /var/lib/apt/lists/*
 
