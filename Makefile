@@ -5,7 +5,7 @@ COMPOSE_FILE = docker-compose.yml
 K3D_CLUSTER = test-lab
 IMAGE_NAME = test-runner:latest
 CONTAINER_NAME = test-container
-SERVICE_NAME = test-service
+
 #MOUNT_PATH = /home/appuser/projects/testing-lab-project-root/env-settings/docker/common-container/
 
 # Colors for output
@@ -33,16 +33,16 @@ build-nocache: ## Collect Docker image. [-NO-CACHE] makes doCker rebuild all lay
 
 run: ## Run the container interactive. Wedding mode (-rm deleys the container after completion).
 	@echo "$(YELLOW)🚀 Запуск контейнера $(CONTAINER_NAME)...$(NC)"
-	docker-compose -f $(COMPOSE_FILE) run --rm $(SERVICE_NAME)
+	docker-compose -f $(COMPOSE_FILE) run --rm $(CONTAINER_NAME)
 
 # === debugging ===
 shell: ## enter the container
 	@echo "$(YELLOW)🐚 Вход в контейнер...$(NC)"
-	docker-compose -f $(COMPOSE_FILE) run --rm $(SERVICE_NAME) bash
+	docker-compose -f $(COMPOSE_FILE) run --rm $(CONTAINER_NAME) bash
 
 logs: ## Show Log
 	@echo "$(YELLOW)📜 Логи контейнера:$(NC)"
-	docker-compose -f $(COMPOSE_FILE) logs -f $(SERVICE_NAME)
+	docker-compose -f $(COMPOSE_FILE) logs -f $(CONTAINER_NAME)
 
 status: ## show the status of services.
 	@echo "$(YELLOW)📊 Статус сервисов:$(NC)"
