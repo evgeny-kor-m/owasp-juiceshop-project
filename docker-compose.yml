@@ -21,4 +21,6 @@ services:
       - ./allure-report:/app/allure-report
     environment:
       - JUICESHOP_BASE_URL=http://host.docker.internal:8080
+      - PYTHONPATH=/app # Add Pythonpath project root for Python modules
+
     command: /bin/bash -c "pytest --alluredir=/app/allure-results && allure generate --clean /app/allure-results -o /app/allure-report"
