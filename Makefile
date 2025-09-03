@@ -4,7 +4,7 @@
 COMPOSE_FILE = docker-compose.yml
 K3D_CLUSTER = test-lab
 IMAGE_NAME = test-runner:latest
-CONTAINER_NAME = test-container
+CONTAINER_NAME = test-runner
 
 #MOUNT_PATH = /home/appuser/projects/testing-lab-project-root/env-settings/docker/common-container/
 
