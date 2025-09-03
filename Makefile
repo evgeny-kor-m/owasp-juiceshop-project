@@ -17,9 +17,9 @@ NC = \033[0m
 .PHONY: help build run test clean logs status k3d-setup k3d-import web-reports
 
 help: ## show the certificate. Disputes a list of all available commands with their descriptions.
-	@echo "$(YELLOW)🚀 UI Testing с поддержкой k3d$(NC)"
-	@echo "$(BLUE)Доступные команды:$(NC)"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-20s$(NC) %s\n", $$1, $$2}'
+    @echo "$(YELLOW)🚀 UI Testing с поддержкой k3d$(NC)"
+    @echo "$(BLUE)Доступные команды:$(NC)"
+    @grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-20s$(NC) %s\n", $$1, $$2}'
 
 run: ## Run the container interactive. Wedding mode (-rm deleys the container after completion).
     @echo "$(YELLOW)🚀 Запуск контейнера $(CONTAINER_NAME)...$(NC)"
