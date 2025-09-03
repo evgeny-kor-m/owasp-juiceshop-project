@@ -16,8 +16,6 @@ NC = \033[0m
 
 .PHONY: help build run test clean logs status k3d-setup k3d-import web-reports
 
-docker-compose up --build
-
 help: ## show the certificate. Disputes a list of all available commands with their descriptions.
 	@echo "$(YELLOW)🚀 UI Testing с поддержкой k3d$(NC)"
 	@echo "$(BLUE)Доступные команды:$(NC)"
