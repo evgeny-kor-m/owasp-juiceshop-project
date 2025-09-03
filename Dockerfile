@@ -1,3 +1,4 @@
+# Dockerfile
 # Используем официальный образ Python как базовый
 FROM python:3.12-slim
 

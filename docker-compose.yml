@@ -1,3 +1,4 @@
+# docker-compose.yml
 services:
   # Сервис для запуска вашего фреймворка автоматизации
   test-runner:
@@ -6,5 +7,18 @@ services:
       dockerfile: Dockerfile
     image: test-runner:latest # We obviously indicate the name of the image so that there is no "Testing-lab-Project-ROT-App-Testing"
     container_name: test-runner
+    deploy:
+      resources:
+        limits:
+          cpus: '1'      # CPU limit (2 nuclei)
+          memory: 1G     # Limit RAM (4 gigabytes)
+        reservations:
+          cpus: '0.5'    # Reservation CPU (0.5 cores)
+          memory: 1G     # Reservation RAM (1 gigabyte)
     volumes:
       - .:/app
+      - ./allure-data:/app/allure-results
+      - ./allure-report:/app/allure-report
+    environment:
+      - JUICESHOP_BASE_URL=http://host.docker.internal:8080
+    command: /bin/bash -c "pytest --alluredir=/app/allure-results && allure generate --clean /app/allure-results -o /app/allure-report"
