@@ -17,9 +17,10 @@ htmlcov/
 
 # Environment files
 #.env
+#docker/.env
 .env.local
 .env.*.local
-docker/.env
+
 
 # Logs and reports
 logs/
