@@ -1,4 +1,5 @@
 # docker/allure-compose.yml
+
 services:
   allure-server:
     image: ${ALLURE_IMAGE:-frankescobar/allure-docker-service}

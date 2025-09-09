@@ -44,9 +44,9 @@ build-nocache: ## Collect Docker image. [-NO-CACHE] makes doCker rebuild all lay
 	@echo "$(YELLOW)🏗️ Сборка Docker образа $(IMAGE_NAME)...$(NC)"
 	docker-compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) build --no-cache
 
-run: ## Run the container interactive. Wedding mode (-rm deleys the container after completion).
+run: ## Run the container interactive. Wedding mode (-rm delete the container after completion).
 	@echo "$(YELLOW)🚀 Запуск контейнера $(CONTAINER_NAME)...$(NC)"
-	docker-compose -f $(MAIN_COMPOSE) run --rm $(CONTAINER_NAME)
+	docker-compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) run --rm $(CONTAINER_NAME)
 
 
 # === debugging ===
@@ -60,7 +60,8 @@ logs: ## Show Log
 
 status: ## show the status of services.
 	@echo "$(YELLOW)📊 Статус сервисов:$(NC)"
-	docker-compose -f $(MAIN_COMPOSE) ps
+	@docker-compose -f $(MAIN_COMPOSE) ps 2>/dev/null || true
+	@docker-compose -f $(ALLURE_COMPOSE) ps 2>/dev/null || true
 
 # === management ===
 clean: ## Clean the reports and stop the services. He stops and deleys all services and their anonymous volumes, as well as “orphaned” containers.
@@ -76,15 +77,15 @@ clean-all: clean ## complete cleaning (including images). Recommendation: Use ca
 	docker-compose -f $(ALLURE_COMPOSE) down --volumes --remove-orphans --rmi all
 	docker system prune -f
 
-clear-cache: ## Очистка кэша
+clean-cache: ## Очистка кэша
 	@echo "$(YELLOW)🧹 Очистка кэша...$(NC)"
-	find . -type d -name "__pycache__" -delete
+	find . -type d -name "__pycache__" -prune -exec rm -rf {} +
 	find . -name "*.pyc" -delete
 
 # === Allure server management ===
 allure-start:
 	@echo "🚀 Запуск Allure сервера..."
-	docker-compose -f $(ALLURE_COMPOSE) up -d
+	docker-compose -f $(ALLURE_COMPOSE) --env-file $(ENV_FILE) up -d
 	@echo "✅ Allure доступен: http://localhost:5050"
 
 allure-stop:
