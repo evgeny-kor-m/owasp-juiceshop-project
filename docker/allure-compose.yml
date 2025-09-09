@@ -4,8 +4,6 @@ services:
   allure-server:
     image: ${ALLURE_IMAGE:-frankescobar/allure-docker-service}
     container_name: allure-server-${ENVIRONMENT:-local}
-#    ports:
-#      - "${ALLURE_PORT:-5050}:5050"
     volumes:
       - ${ALLURE_RESULTS_PATH:-../allure-results}:/app/allure-results:ro
       - ${ALLURE_REPORT_PATH:-../allure-report}:/app/reports
@@ -34,7 +32,7 @@ services:
     depends_on:
       - allure-server
     ports:
-      - "${ALLURE_PORT:-5050}:5050"
+      - "${ALLURE_PORT:-5050}:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     networks:
