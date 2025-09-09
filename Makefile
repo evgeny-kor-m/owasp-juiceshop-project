@@ -16,7 +16,6 @@ ALLURE_COMPOSE = $(DOCKER_DIR)/allure-compose.yml
 ENV_FILE = $(DOCKER_DIR)/.env
 
 # Variables
-MAIN_COMPOSE = docker-compose.yml
 K3D_CLUSTER = test-lab
 IMAGE_NAME = test-runner:latest
 CONTAINER_NAME = test-runner
