@@ -16,7 +16,7 @@ htmlcov/
 .mypy_cache/
 
 # Environment files
-.env
+#.env
 .env.local
 .env.*.local
 docker/.env
