@@ -64,11 +64,6 @@ status: ## show the status of services.
 	@docker-compose -f $(ALLURE_COMPOSE) ps 2>/dev/null || true
 
 # === management ===
-clean: ## Clean the reports and stop the services. He stops and deleys all services and their anonymous volumes, as well as “orphaned” containers.
-	@echo "$(YELLOW)🧹 Очистка...$(NC)"
-	docker-compose -f $(MAIN_COMPOSE) down --volumes --remove-orphans
-	docker-compose -f $(ALLURE_COMPOSE) down --volumes --remove-orphans
-	sudo rm -rf reports/* screenshots/* allure-results/* allure-report/* logs/*
 
 clean-all: clean ## complete cleaning (including images). Recommendation: Use carefully
 ## Docker-Compose ... Down --romi all (deleys the images used by services) and Docker System Prune -f (removes unused Docker objects).
@@ -76,9 +71,11 @@ clean-all: clean ## complete cleaning (including images). Recommendation: Use ca
 	docker-compose -f $(MAIN_COMPOSE) down --volumes --remove-orphans --rmi all
 	docker-compose -f $(ALLURE_COMPOSE) down --volumes --remove-orphans --rmi all
 	docker system prune -f
+	@clean
 
-clean-cache: ## Очистка кэша
-	@echo "$(YELLOW)🧹 Очистка кэша...$(NC)"
+clean: ##
+	@echo "$(YELLOW)🧹 Очистка...$(NC)"
+	sudo rm -rf reports/* screenshots/* allure-results/* allure-report/* logs/* || true
 	find . -type d -name "__pycache__" -prune -exec rm -rf {} +
 	find . -name "*.pyc" -delete
 
