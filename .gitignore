@@ -15,6 +15,12 @@ venv/
 htmlcov/
 .mypy_cache/
 
+# Environment files
+.env
+.env.local
+.env.*.local
+docker/.env
+
 # Logs and reports
 logs/
 reports/

@@ -1,0 +1,45 @@
+# docker-compose.yml
+# docker/docker-compose.yml
+version: '3.8'
+
+services:
+  test-runner:
+    build:
+      context: ${PROJECT_ROOT_PATH:-.}
+      dockerfile: Dockerfile
+    image: ${TEST_RUNNER_IMAGE:-test-runner:latest}
+    container_name: test-runner-${ENVIRONMENT:-local}
+    ports:
+      - "${TEST_RUNNER_PORT:-4040}:4040"
+    deploy:
+      resources:
+        limits:
+          cpus: '${CPU_LIMIT:-1}'
+          memory: ${MEMORY_LIMIT:-1G}
+        reservations:
+          cpus: '${CPU_RESERVATION:-0.5}'
+          memory: ${MEMORY_RESERVATION:-1G}
+    volumes:
+      - ${PROJECT_ROOT_PATH:-..}:/app
+      - ${ALLURE_RESULTS_PATH:-../allure-results}:/app/allure-results
+      - ${ALLURE_REPORT_PATH:-../allure-report}:/app/allure-report
+    environment:
+      # Переменные для приложения ВНУТРИ контейнера
+      - JUICESHOP_BASE_URL=${JUICESHOP_BASE_URL}
+      - API_BASE_URL=${API_BASE_URL}
+      - PYTHONPATH=${PYTHONPATH:-/app}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - ENVIRONMENT=${ENVIRONMENT:-local}
+    command: /bin/bash -c "pytest --alluredir=/app/allure-results && allure generate --clean /app/allure-results -o /app/allure-report"
+    restart: no
+
+    # Здоровье контейнера
+    healthcheck:
+      test: ["CMD-SHELL", "ps aux | grep pytest || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  default:
+    name: juiceshop-testing-network-${ENVIRONMENT:-local}
