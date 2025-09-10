@@ -7,7 +7,7 @@ services:
     image: ${ALLURE_IMAGE:-frankescobar/allure-docker-service}
     container_name: allure-server-${ENVIRONMENT:-local}
     volumes:
-      - ${ALLURE_RESULTS_PATH:-../allure-results}:/app/allure-results:ro
+      - ${ALLURE_RESULTS_PATH:-../allure-results}:/app/allure-results
       - ${ALLURE_REPORT_PATH:-../allure-report}:/app/reports
     environment:
       # Настройки Allure сервиса
