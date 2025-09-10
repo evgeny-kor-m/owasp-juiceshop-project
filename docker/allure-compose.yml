@@ -7,6 +7,8 @@ services:
     volumes:
       - ${ALLURE_RESULTS_PATH:-./allure-results}:/app/allure-results
       - ${ALLURE_REPORT_PATH:-./allure-report}:/app/reports
+    tmpfs:
+      - /app/allure-docker-api/static/projects/default/results:rw,noexec,nosuid,size=200m
     environment:
       CHECK_RESULTS_EVERY_SECONDS: ${ALLURE_CHECK_INTERVAL:-10}
       KEEP_HISTORY: ${ALLURE_KEEP_HISTORY:-1}
@@ -17,12 +19,7 @@ services:
     restart: unless-stopped
     networks:
       - default
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:5050 || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
+
 
   web-server:
     image: nginx:alpine
