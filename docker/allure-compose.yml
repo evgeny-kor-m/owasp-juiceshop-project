@@ -34,7 +34,9 @@ services:
     ports:
       - "${ALLURE_PORT:-5050}:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx.conf.template:/etc/nginx/templates/default.conf.template:ro
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-local}
     networks:
       - default
 
