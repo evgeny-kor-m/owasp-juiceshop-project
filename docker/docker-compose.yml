@@ -19,8 +19,8 @@ services:
           memory: ${MEMORY_RESERVATION:-1G}
     volumes:
       - ${PROJECT_ROOT_PATH:-..}:/app
-      - ${ALLURE_RESULTS_PATH:-../allure-results}:/app/allure-results
-      - ${ALLURE_REPORT_PATH:-../allure-report}:/app/allure-report
+      - ${ALLURE_RESULTS_PATH:-./allure-results}:/app/allure-results
+      - ${ALLURE_REPORT_PATH:-./allure-report}:/app/reports
     environment:
       # Переменные для приложения ВНУТРИ контейнера
       - JUICESHOP_BASE_URL=${JUICESHOP_BASE_URL}
