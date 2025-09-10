@@ -6,7 +6,7 @@ services:
     container_name: allure-server-${ENVIRONMENT:-local}
     volumes:
       - ${ALLURE_RESULTS_PATH:-./allure-results}:/app/allure-results
-      - ${ALLURE_REPORT_PATH:-./allure-report}:/app/reports
+      - ${ALLURE_REPORT_PATH:-./allure-report}:/app/allure-reports
     environment:
       CHECK_RESULTS_EVERY_SECONDS: ${ALLURE_CHECK_INTERVAL:-10}
       KEEP_HISTORY: ${ALLURE_KEEP_HISTORY:-1}

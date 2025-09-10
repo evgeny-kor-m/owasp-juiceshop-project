@@ -84,6 +84,7 @@ allure-start:
 	@echo "🚀 Запуск Allure сервера..."
 	docker-compose -f $(ALLURE_COMPOSE) --env-file $(ENV_FILE) up -d
 	@echo "✅ Allure доступен: http://localhost:5050/allure/"
+	@echo "✅ HTTP доступен: http://localhost:5050/reports/"
 
 allure-stop:
 	@echo "🛑 Остановка Allure сервера..."
