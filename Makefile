@@ -65,13 +65,13 @@ status: ## show the status of services.
 
 # === management ===
 
-clean-all: clean ## complete cleaning (including images). Recommendation: Use carefully
+clean-all: ## complete cleaning (including images). Recommendation: Use carefully
 ## Docker-Compose ... Down --romi all (deleys the images used by services) and Docker System Prune -f (removes unused Docker objects).
 	@echo "$(YELLOW)🧹 Полная очистка (включая образы)...$(NC)"
 	docker-compose -f $(MAIN_COMPOSE) down --volumes --remove-orphans --rmi all
 	docker-compose -f $(ALLURE_COMPOSE) down --volumes --remove-orphans --rmi all
 	docker system prune -f
-	@clean
+	@make clean
 
 clean: ##
 	@echo "$(YELLOW)🧹 Очистка...$(NC)"
@@ -83,7 +83,7 @@ clean: ##
 allure-start:
 	@echo "🚀 Запуск Allure сервера..."
 	docker-compose -f $(ALLURE_COMPOSE) --env-file $(ENV_FILE) up -d
-	@echo "✅ Allure доступен: http://localhost:5050"
+	@echo "✅ Allure доступен: http://localhost:5050/allure/"
 
 allure-stop:
 	@echo "🛑 Остановка Allure сервера..."

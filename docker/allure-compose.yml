@@ -20,7 +20,9 @@ services:
     networks:
       - default
 
-
+  # Browser -> Port 5050 on your computer -> Port 80 of the Nginx container ->
+  # Nginx reads files from the mounted allure-report folder ->
+  # Nginx serves the report files.
   web-server:
     image: nginx:alpine
     container_name: nginx-allure-${ENVIRONMENT:-local}
@@ -35,6 +37,7 @@ services:
     networks:
       - default
     restart: unless-stopped
+
 
 networks:
   default:
