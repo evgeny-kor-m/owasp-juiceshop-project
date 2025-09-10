@@ -1,5 +1,7 @@
 # docker/allure-compose.yml
 
+# docker/allure-compose.yml
+
 services:
   allure-server:
     image: ${ALLURE_IMAGE:-frankescobar/allure-docker-service}
@@ -17,6 +19,8 @@ services:
       # Дополнительные настройки
       TZ: Europe/Moscow
     restart: unless-stopped
+    networks:
+      - default
 
     # Здоровье сервиса
     healthcheck:
@@ -36,7 +40,8 @@ services:
     volumes:
       - ./nginx.conf.template:/etc/nginx/templates/default.conf.template:ro
     environment:
-      - ENVIRONMENT=${ENVIRONMENT:-local}
+      # Важно: передаем переменную окружения с дефолтным значением
+      ENVIRONMENT: ${ENVIRONMENT:-local}
     networks:
       - default
 

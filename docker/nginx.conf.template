@@ -9,5 +9,14 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_redirect off;
         proxy_buffering off;
+
+        # Дополнительные настройки для Allure
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Server $host;
+    }
+
+    # Redirect root to allure
+    location = / {
+        return 301 /allure/;
     }
 }

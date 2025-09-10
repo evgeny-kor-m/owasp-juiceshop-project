@@ -76,7 +76,7 @@ clean-all: clean ## complete cleaning (including images). Recommendation: Use ca
 clean: ##
 	@echo "$(YELLOW)🧹 Очистка...$(NC)"
 	sudo rm -rf reports/* screenshots/* allure-results/* allure-report/* logs/* || true
-	find . -type d -name "__pycache__" -prune -exec rm -rf {} +
+	sudo find . -type d -name "__pycache__" -prune -exec rm -rf {} +
 	find . -name "*.pyc" -delete
 
 # === Allure server management ===
