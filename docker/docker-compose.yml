@@ -4,7 +4,7 @@ services:
   test-runner:
     build:
       context: ${PROJECT_ROOT_PATH:-.}
-      dockerfile: Dockerfile
+      dockerfile: ./docker/Dockerfile
     image: ${TEST_RUNNER_IMAGE:-test-runner:latest}
     container_name: test-runner-${ENVIRONMENT:-local}
     ports:
@@ -19,8 +19,8 @@ services:
           memory: ${MEMORY_RESERVATION:-1G}
     volumes:
       - ${PROJECT_ROOT_PATH:-..}:/app
-      - ${ALLURE_RESULTS_PATH:-./allure-results}:/app/allure-results
-      - ${ALLURE_REPORT_PATH:-./allure-report}:/app/reports
+      - ${ALLURE_RESULTS_PATH:-../allure-results}:/app/allure-results
+      - ${ALLURE_REPORT_PATH:-../allure-report}:/app/reports
     environment:
       # Переменные для приложения ВНУТРИ контейнера
       - JUICESHOP_BASE_URL=${JUICESHOP_BASE_URL}
