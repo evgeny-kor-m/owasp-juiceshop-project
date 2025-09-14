@@ -86,13 +86,13 @@ jobs:
         working-directory: .
         run: |
           # Explicitly specify all report arguments that should be taken from pytest.ini
-          pytest --html=/app/html-reports/report.html --self-contained-html \
+          pytest --html=html-reports/report.html --self-contained-html \
           --json-report --json-report-file=html-reports/json_report.json \
           --cov=. --cov-report=html:html-reports/coverage_html --cov-report=xml:html-reports/coverage.xml --cov-report=term-missing \
-          --alluredir=/app/allure-results --clean-alluredir 
+          --alluredir=allure-results --clean-alluredir 
           
           echo '📊 Generating Allure reports...'
-          allure generate /app/allure-results --clean -o /app/allure-reports # Generate report after tests
+          allure generate allure-results --clean -o allure-reports # Generate report after tests
           
           echo '🔍 Checking the contents of the html-reports/ directory:'
           ls -R html-reports/ || echo "html-reports/ directory not found or empty."
