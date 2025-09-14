@@ -5,12 +5,14 @@ pytest>=7.0.0             # Freimvork for testing
 
 # Html reports
 pytest-html>=3.1.0        # Plugin for generating Pytest HTML reports
+pytest-json-report>=1.5.0 # Plugin for generating Pytest json reports (if used)
 
 # Additional libraries for working with data
 requests>=2.28.0             # Http Requests (often for API tests)
 
 # Allure Reports
 allure-pytest>=2.9.0      # Plugin for Pytest integration with Allure Framework
+pytest-cov>=4.0.0            # Code covering (if used)
 
 # Kubernetes Python Client (for infrastructure tests)
 kubernetes>=24.0.0
