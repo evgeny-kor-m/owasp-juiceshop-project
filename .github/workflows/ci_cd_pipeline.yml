@@ -1,2 +1,135 @@
+# .github/workflows/ci_cd_pipeline.yml
+name: Testing
+
 on:
+
+#  Trigger the workflow on 'push' to specified branches.
+  push:
+    branches:
+      - master # The workflow will run when changes are pushed to the 'master' branch.
+    # Trigger the workflow when a 'pull request' (PR) is created or updated
+    # for the specified branches.
+  pull_request:
+    branches:
+      - master # The workflow will run for PRs targeting the 'master' branch.
+  # Trigger the workflow on a schedule (cron job).
+  schedule:
+    # '0 2 * * *' means "every day at 2:00 UTC".
+    - cron: '0 2 * * *'
+
+  # Add the ability to manually trigger the workflow from the GitHub interface.
+  workflow_dispatch:
+
+# --- Jobs ---
+#  Jobs are sets of steps that execute on a single runner (virtual machine).
+#  Jobs run in parallel by default, unless dependencies are specified (needs).
 jobs:
+
+#--- The 'test' job (Run tests) ---
+  test:
+    runs-on: ubuntu-latest # Run on an Ubuntu virtual machine.
+    timeout-minutes: 20 # Increase the timeout for the entire job to 20 minutes.
+    # ADDED: Explicitly provide read permission for the repository contents
+    permissions:
+      contents: read # Required for actions/checkout
+
+    steps:
+      - uses: actions/checkout@v4 # Step to clone the code from the repository.
+
+      - name: Set up Python # Set up the Python environment.
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x' # Use the latest version of Python 3.x.
+
+      - name: Cache Python dependencies # Cache Python dependencies.
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip # Path to the pip cache.
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }} # Cache key.
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies with retry # Install dependencies from requirements.txt with retries.
+        run: |
+          MAX_RETRIES=5
+          RETRY_COUNT=0
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            echo "Attempt $((RETRY_COUNT + 1)) to install dependencies..."
+            python -m pip install --upgrade pip
+            if python -m pip install -r requirements.txt; then
+              echo "Dependencies installed successfully."
+              break
+            else
+              echo "Dependency installation failed. Retrying in 5 seconds..."
+              RETRY_COUNT=$((RETRY_COUNT + 1))
+              sleep 5
+            fi
+          done
+          if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+            echo "Failed to install dependencies after $MAX_RETRIES attempts."
+            exit 1
+          fi
+
+      - name: Install Allure Commandline # Install Allure Commandline
+        run: |
+          ALLURE_VERSION="2.34.1" # Use a specific version for stability
+          wget https://github.com/allure-framework/allure2/releases/download/${ALLURE_VERSION}/allure-${ALLURE_VERSION}.zip -P /tmp
+          sudo unzip /tmp/allure-${ALLURE_VERSION}.zip -d /opt
+          sudo mv /opt/allure-${ALLURE_VERSION} /opt/allure
+          # USING A NEW METHOD: Add to $GITHUB_PATH for subsequent steps
+          echo "/opt/allure/bin" >> $GITHUB_PATH 
+
+      - name: Create reports directory # Create reports directories before running tests.
+        run: mkdir -p html-reports allure-results screenshots logs allure-reports # Create all necessary directories, including allure-report
+
+      - name: Run Pytest tests # Run Pytest tests.
+        working-directory: .
+        run: |
+          # Explicitly specify all report arguments that should be taken from pytest.ini
+          pytest --html=/app/html-reports/report.html --self-contained-html \
+          --json-report --json-report-file=reports/json_report.json \
+          --cov=. --cov-report=html:reports/coverage_html --cov-report=xml:reports/coverage.xml --cov-report=term-missing \
+          --alluredir=/app/allure-results --clean-alluredir 
+          
+          echo '📊 Generating Allure reports...'
+          allure generate /app/allure-results --clean -o /app/allure-reports # Generate report after tests
+          
+          echo '🔍 Checking the contents of the html-reports/ directory:'
+          ls -R html-reports/ || echo "html-reports/ directory not found or empty."
+          echo '🔍 Checking the contents of the allure-results/ directory:'
+          ls -R allure-results/ || echo "allure-results/ directory not found or empty."
+          echo '🔍 Checking the contents of the allure-reports/ directory:'
+          ls -R allure-reports/ || echo "allure-reports/ directory not found or empty."
+        env:
+          BROWSER_HEADLESS: true # Run the browser in headless mode.
+
+      - name: Upload Allure Results # Upload Allure results as artifacts.
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results # Path is now correct relative to the root
+
+      - name: Upload Allure HTML Report # Upload the generated Allure HTML report as an artifact.
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-html-report
+          path: allure-reports # Path to the generated Allure HTML report
+
+      - name: Upload Pytest HTML Report # Upload the Pytest HTML report as artifacts.
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-html-report
+          path: html-reports/report.html # Path is now correct relative to the root
+
+      - name: Upload Coverage HTML Report # Upload the coverage HTML report as an artifact.
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html-report
+          path: html-reports/coverage_html # Path is now correct relative to the root
+
+      - name: Upload JSON Report # Upload the JSON report as an artifact.
+        uses: actions/upload-artifact@v4
+        with:
+          name: json-report
+          path: html-reports/json_report.json
+

@@ -13,7 +13,6 @@ services:
       KEEP_HISTORY_LATEST: ${ALLURE_HISTORY_LATEST:-25}
       ROOT_REDIRECT: "projects/default/reports/latest"
       URL_PREFIX: ""
-      TZ: Europe/Moscow
     restart: unless-stopped
     networks:
       - default

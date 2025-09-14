@@ -48,6 +48,10 @@ run: ## Run the container interactive. Wedding mode (-rm delete the container af
 	@echo "$(YELLOW)🚀 Запуск контейнера $(CONTAINER_NAME)...$(NC)"
 	docker-compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) run --rm $(CONTAINER_NAME)
 
+test: ## Run tests in Docker
+	$(call check_env)
+	@echo "$(BLUE)🚀 Запуск тестов...$(NC)"
+	@docker-compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) up --build
 
 # === debugging ===
 shell: ## enter the container
