@@ -5,17 +5,24 @@ services:
     image: ${ALLURE_IMAGE:-frankescobar/allure-docker-service}
     container_name: allure-server-${ENVIRONMENT:-local}
     volumes:
-      - ${ALLURE_RESULTS_PATH:-./allure-results}:/app/allure-results
-      - ${ALLURE_REPORT_PATH:-./allure-report}:/app/allure-reports
+      - ${ALLURE_RESULTS_PATH:-../allure-results}:/app/allure-results
+      - ${ALLURE_REPORT_PATH:-../allure-reports}:/app/allure-report
     environment:
       CHECK_RESULTS_EVERY_SECONDS: ${ALLURE_CHECK_INTERVAL:-10}
       KEEP_HISTORY: ${ALLURE_KEEP_HISTORY:-1}
       KEEP_HISTORY_LATEST: ${ALLURE_HISTORY_LATEST:-25}
       ROOT_REDIRECT: "projects/default/reports/latest"
       URL_PREFIX: ""
+      TZ: Europe/Moscow
     restart: unless-stopped
     networks:
       - default
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5050 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   # Browser -> Port 5050 on your computer -> Port 80 of the Nginx container ->
   # Nginx reads files from the mounted allure-report folder ->

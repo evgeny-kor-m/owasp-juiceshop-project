@@ -22,14 +22,31 @@ services:
       - ${ALLURE_RESULTS_PATH:-../allure-results}:/app/allure-results
       - ${ALLURE_REPORT_PATH:-../allure-report}:/app/allure-reports
       - ${HTML_REPORT_PATH:-../html-reports}:/app/html-reports
+    # Set environment variables that the application inside the container needs.
     environment:
-      # Переменные для приложения ВНУТРИ контейнера
+      # Application variables needed for testing.
       - JUICESHOP_BASE_URL=${JUICESHOP_BASE_URL}
       - API_BASE_URL=${API_BASE_URL}
+      # Python-specific environment variables.
       - PYTHONPATH=${PYTHONPATH:-/app}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
       - ENVIRONMENT=${ENVIRONMENT:-local}
-    command: /bin/bash -c "pytest --html=/app/html-reports/report.html --self-contained-html --alluredir=/app/allure-results && allure generate --clean /app/allure-results -o /app/allure-reports"
+    # The command to execute when the container starts. We use a bash command to run multiple commands sequentially.
+    command: /bin/bash -c "
+      # Run pytest with various report plugins.
+      pytest \
+      --json-report \
+      --json-report-file=/app/html-reports/json_report.json \
+      --cov=. \
+      --cov-report=html:/app/html-reports/coverage_html \
+      --cov-report=xml:/app/html-reports/coverage.xml \
+      --cov-report=term-missing \
+      --html=/app/html-reports/report.html \
+      --self-contained-html \
+      --alluredir=/app/allure-results \
+      # Generate the Allure HTML report from the raw results.
+      && allure generate --clean /app/allure-results -o /app/allure-reports"
+
     restart: no
 
     # Здоровье контейнера
