@@ -41,6 +41,9 @@ jobs:
         with:
           python-version: '3.x' # Use the latest version of Python 3.x.
 
+      - name: Add project root to PYTHONPATH
+        run: echo "PYTHONPATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+
       - name: Cache Python dependencies # Cache Python dependencies.
         uses: actions/cache@v4
         with:
