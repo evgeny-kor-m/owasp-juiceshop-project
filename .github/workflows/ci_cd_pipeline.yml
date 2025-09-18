@@ -82,6 +82,10 @@ jobs:
       - name: Create reports directory # Create reports directories before running tests.
         run: mkdir -p html-reports allure-results screenshots logs allure-reports # Create all necessary directories, including allure-report
 
+      - name: Debug Pytest plugins # НОВЫЙ ШАГ: Проверка загруженных плагинов Pytest
+        working-directory: .
+        run: tree & pytest --trace-config # Убрал --version для более подробного вывода
+
       - name: Run Pytest tests # Run Pytest tests.
         working-directory: .
         run: |
