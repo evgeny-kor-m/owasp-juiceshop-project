@@ -38,42 +38,42 @@ help: ## show the certificate. Disputes a list of all available commands with th
 # === Basic teams ===
 build: ## Collect Docker image. For everyday development, to use the Docker cache by default, which will significantly speed up repeated assemblies.
 	@echo "$(YELLOW)🏗️ Сборка Docker образа $(IMAGE_NAME)...$(NC)"
-	docker-compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) build
+	docker compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) build
 
 build-nocache: ## Collect Docker image. [-NO-CACHE] makes doCker rebuild all layers, ignoring the cache, which is useful to ensure fresh assembly, but can be slower.
 	@echo "$(YELLOW)🏗️ Сборка Docker образа $(IMAGE_NAME)...$(NC)"
-	docker-compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) build --no-cache
+	docker compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) build --no-cache
 
 run: ## Run the container interactive. Wedding mode (-rm delete the container after completion).
 	@echo "$(YELLOW)🚀 Запуск контейнера $(CONTAINER_NAME)...$(NC)"
-	docker-compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) run --rm $(CONTAINER_NAME)
+	docker compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) run --rm $(CONTAINER_NAME)
 
 test: ## Run tests in Docker
 	$(call check_env)
 	@echo "$(BLUE)🚀 Запуск тестов...$(NC)"
-	@docker-compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) up --build
+	@docker compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) up --build
 
 # === debugging ===
 shell: ## enter the container
 	@echo "$(YELLOW)🐚 Вход в контейнер...$(NC)"
-	docker-compose -f $(MAIN_COMPOSE) run --rm $(CONTAINER_NAME) bash || true
+	docker compose -f $(MAIN_COMPOSE) run --rm $(CONTAINER_NAME) bash || true
 
 logs: ## Show Log
 	@echo "$(YELLOW)📜 Логи контейнера:$(NC)"
-	docker-compose -f $(MAIN_COMPOSE) logs -f $(CONTAINER_NAME)
+	docker compose -f $(MAIN_COMPOSE) logs -f $(CONTAINER_NAME)
 
 status: ## show the status of services.
 	@echo "$(YELLOW)📊 Статус сервисов:$(NC)"
-	@docker-compose -f $(MAIN_COMPOSE) ps 2>/dev/null || true
-	@docker-compose -f $(ALLURE_COMPOSE) ps 2>/dev/null || true
+	@docker compose -f $(MAIN_COMPOSE) ps 2>/dev/null || true
+	@docker compose -f $(ALLURE_COMPOSE) ps 2>/dev/null || true
 
 # === management ===
 
 clean-all: ## complete cleaning (including images). Recommendation: Use carefully
-## Docker-Compose ... Down --romi all (deleys the images used by services) and Docker System Prune -f (removes unused Docker objects).
+## docker compose ... Down --romi all (deleys the images used by services) and Docker System Prune -f (removes unused Docker objects).
 	@echo "$(YELLOW)🧹 Полная очистка (включая образы)...$(NC)"
-	docker-compose -f $(MAIN_COMPOSE) down --volumes --remove-orphans --rmi all
-	docker-compose -f $(ALLURE_COMPOSE) down --volumes --remove-orphans --rmi all
+	docker compose -f $(MAIN_COMPOSE) down --volumes --remove-orphans --rmi all
+	docker compose -f $(ALLURE_COMPOSE) down --volumes --remove-orphans --rmi all
 	docker system prune -f
 	@make clean
 
@@ -86,18 +86,18 @@ clean: ##
 # === Allure server management ===
 allure-start:
 	@echo "🚀 Запуск Allure сервера..."
-	docker-compose -f $(ALLURE_COMPOSE) --env-file $(ENV_FILE) up -d
+	docker compose -f $(ALLURE_COMPOSE) --env-file $(ENV_FILE) up -d
 	@echo "✅ Allure доступен: http://localhost:5050/allure/"
 	@echo "✅ HTTP доступен: http://localhost:5050/reports/"
 
 allure-stop:
 	@echo "🛑 Остановка Allure сервера..."
-	docker-compose -f $(ALLURE_COMPOSE) down
+	docker compose -f $(ALLURE_COMPOSE) down
 
 allure-restart:
 	@echo "🔄 Перезапуск Allure сервера..."
-	docker-compose -f $(ALLURE_COMPOSE) restart
+	docker compose -f $(ALLURE_COMPOSE) restart
 
 # Логи Allure сервера
 allure-logs:
-	docker-compose -f $(ALLURE_COMPOSE) logs -f
+	docker compose -f $(ALLURE_COMPOSE) logs -f
