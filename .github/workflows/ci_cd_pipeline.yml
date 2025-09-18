@@ -34,81 +34,19 @@ jobs:
       contents: read # Required for actions/checkout
 
     steps:
-      - uses: actions/checkout@v4 # Step to clone the code from the repository.
+      - name: Checkout repository # Step to clone the code from the repository.
+        uses: actions/checkout@v4
 
-      - name: Set up Python # Set up the Python environment.
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x' # Use the latest version of Python 3.x.
-
-      - name: Add project root to PYTHONPATH
-        run: echo "PYTHONPATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
-
-      - name: Cache Python dependencies # Cache Python dependencies.
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip # Path to the pip cache.
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }} # Cache key.
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Install dependencies with retry # Install dependencies from requirements.txt with retries.
+      - name: Create .env file from secrets
         run: |
-          MAX_RETRIES=5
-          RETRY_COUNT=0
-          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-            echo "Attempt $((RETRY_COUNT + 1)) to install dependencies..."
-            python -m pip install --upgrade pip
-            if python -m pip install -r requirements.txt; then
-              echo "Dependencies installed successfully."
-              break
-            else
-              echo "Dependency installation failed. Retrying in 5 seconds..."
-              RETRY_COUNT=$((RETRY_COUNT + 1))
-              sleep 5
-            fi
-          done
-          if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
-            echo "Failed to install dependencies after $MAX_RETRIES attempts."
-            exit 1
-          fi
-
-      - name: Install Allure Commandline # Install Allure Commandline
-        run: |
-          ALLURE_VERSION="2.34.1" # Use a specific version for stability
-          wget https://github.com/allure-framework/allure2/releases/download/${ALLURE_VERSION}/allure-${ALLURE_VERSION}.zip -P /tmp
-          sudo unzip /tmp/allure-${ALLURE_VERSION}.zip -d /opt
-          sudo mv /opt/allure-${ALLURE_VERSION} /opt/allure
-          # USING A NEW METHOD: Add to $GITHUB_PATH for subsequent steps
-          echo "/opt/allure/bin" >> $GITHUB_PATH 
-
-      - name: Create reports directory # Create reports directories before running tests.
-        run: mkdir -p html-reports allure-results screenshots logs allure-reports # Create all necessary directories, including allure-report
-
-      - name: Debug Pytest plugins # НОВЫЙ ШАГ: Проверка загруженных плагинов Pytest
-        working-directory: .
-        run: tree & pytest --trace-config # Убрал --version для более подробного вывода
-
-      - name: Run Pytest tests # Run Pytest tests.
-        working-directory: .
-        run: |
-          # Explicitly specify all report arguments that should be taken from pytest.ini
-          pytest --html=html-reports/report.html --self-contained-html \
-          --json-report --json-report-file=html-reports/json_report.json \
-          --cov=. --cov-report=html:html-reports/coverage_html --cov-report=xml:html-reports/coverage.xml --cov-report=term-missing \
-          --alluredir=allure-results --clean-alluredir 
-          
-          echo '📊 Generating Allure reports...'
-          allure generate allure-results --clean -o allure-reports # Generate report after tests
-          
-          echo '🔍 Checking the contents of the html-reports/ directory:'
-          ls -R html-reports/ || echo "html-reports/ directory not found or empty."
-          echo '🔍 Checking the contents of the allure-results/ directory:'
-          ls -R allure-results/ || echo "allure-results/ directory not found or empty."
-          echo '🔍 Checking the contents of the allure-reports/ directory:'
-          ls -R allure-reports/ || echo "allure-reports/ directory not found or empty."
+          echo "${{ secrets.DOCKER_ENV_VARS }}" > .env
         env:
-          BROWSER_HEADLESS: true # Run the browser in headless mode.
+          DOCKER_ENV_VARS: ${{ secrets.DOCKER_ENV_VARS }}
+
+      - name: Run tests with Docker Compose
+        run: |
+          # Use your Makefile target to run the tests
+          make test
 
       - name: Upload Allure Results # Upload Allure results as artifacts.
         uses: actions/upload-artifact@v4
