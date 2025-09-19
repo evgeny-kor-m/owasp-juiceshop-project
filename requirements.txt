@@ -2,6 +2,7 @@
 
 # Basic libraries for testing
 pytest>=7.0.0             # Freimvork for testing
+selenium>=4.0.0           # Library for Automation of Browser (for Selenium tests)
 
 # Html reports
 pytest-html>=3.1.0        # Plugin for generating Pytest HTML reports
