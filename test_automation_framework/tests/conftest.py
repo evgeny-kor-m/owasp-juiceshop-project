@@ -1,6 +1,8 @@
 import pytest
 import os
 import requests
+from test_automation_framework.web_utils.selenium_wrapper import SeleniumWrapper
+
 
 JUICESHOP_BASE_URL = "JUICESHOP_BASE_URL"
 
@@ -15,7 +17,7 @@ def base_url():
     if not url:
         raise ValueError(f"Не установлена переменная окружения {JUICESHOP_BASE_URL}. "
                          "Укажите URL-адрес приложения Juice Shop, например: "
-                         "http://juiceshop-service.juiceshop-namespace.svc.cluster.local")
+                         "http://host.docker.internal:8080")
     return url
 
 @pytest.fixture(scope="session")
@@ -28,3 +30,22 @@ def api_session():
     session.headers.update({'Host': 'juice-shop.local'})
     yield session
     session.close()
+
+@pytest.fixture(scope="function")
+def setup_teardown_driver(request):
+    """
+    Фикстура для инициализации и закрытия драйвера, используя класс-обертку.
+    """
+    web_wrapper = SeleniumWrapper()
+    driver = web_wrapper.get_driver()
+
+    yield driver
+
+    if request.node.rep_call.failed:
+        screenshot_dir = "screenshots"
+        if not os.path.exists(screenshot_dir):
+            os.makedirs(screenshot_dir)
+        test_name = request.node.name
+        driver.save_screenshot(f"{screenshot_dir}/{test_name}.png")
+
+    web_wrapper.quit_driver()

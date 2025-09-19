@@ -1,0 +1,29 @@
+# test_automation_framework/web_utils/selenium_wrapper.py
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+import os
+
+class SeleniumWrapper:
+    def __init__(self):
+        self.driver = self._create_driver()
+
+    def _create_driver(self):
+        chrome_options = Options()
+
+        if os.environ.get("BROWSER_HEADLESS") == "true":
+            chrome_options.add_argument("--headless")
+            chrome_options.add_argument("--no-sandbox")
+            chrome_options.add_argument("--disable-dev-shm-usage")
+
+        service = Service(executable_path="/usr/bin/chromedriver")
+        driver = webdriver.Chrome(service=service, options=chrome_options)
+        driver.set_window_size(1920, 1080)
+        driver.implicitly_wait(10)
+        return driver
+
+    def get_driver(self):
+        return self.driver
+
+    def quit_driver(self):
+        self.driver.quit()

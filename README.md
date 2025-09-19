@@ -19,8 +19,11 @@ Project Structure
 ├── pytest.ini                   # Pytest configuration
 ├── requirements.txt             # Python dependencies
 └── test_automation_framework/   # Source code of your project
-├── api/
-└── tests/
+    ├── api/
+    ├── pages/
+    └── tests/
+        ├──api-tests
+        └──ui-tests
 
 Quick Start
 1. Environment Setup
