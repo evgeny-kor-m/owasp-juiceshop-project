@@ -28,6 +28,7 @@ services:
       # Application variables needed for testing.
       - JUICESHOP_BASE_URL=${JUICESHOP_BASE_URL}
       - API_BASE_URL=${API_BASE_URL}
+      - WEB_BASE_URL=${WEB_BASE_URL}
       # Python-specific environment variables.
       - PYTHONPATH=${PYTHONPATH:-/app}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
