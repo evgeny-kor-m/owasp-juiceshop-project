@@ -2,9 +2,9 @@ from selenium.webdriver.common.by import By
 
 class LoginPage:
     # Конструктор, который принимает драйвер
-    def __init__(self, driver):
+    def __init__(self, driver,base_url):
         self.driver = driver
-        self.url = "http://host.docker.internal:8080"
+        self.url = f"{base_url}/rest/user/login"
 
     # Локаторы элементов на странице
     _email_field = (By.ID, "email")
