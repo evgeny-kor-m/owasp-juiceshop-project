@@ -10,7 +10,7 @@ class LoginPage:
     # Конструктор, который принимает драйвер
     def __init__(self, driver,base_url):
         self.driver = driver
-        self.url = f"{base_url}/rest/user/login"
+        self.url = f"{base_url}/#/login"
 
     # Локаторы элементов на странице
     _email_field = (By.ID, "email")
@@ -40,7 +40,13 @@ class LoginPage:
             raise
 
     def click_login(self):
-        self.driver.find_element(*self._login_button).click()
+        try:
+            wait = WebDriverWait(self.driver, 10)
+            login_button = wait.until(EC.element_to_be_clickable(self._login_button))
+            login_button.click()
+        except Exception as e:
+            logger.error(f"Failed to click login button: {e}")
+            raise
 
     def get_welcome_message(self):
         return self.driver.find_element(*self._welcome_message).text

@@ -5,13 +5,13 @@ from test_automation_framework.pages.LoginPage import LoginPage
 logger = logging.getLogger(__name__)
 
 #@pytest.mark.ui
-def test_user_login(setup_teardown_driver,base_url):
+def test_user_login(setup_teardown_driver,web_base_url):
     # 'setup_teardown_driver' - это фикстура, которая предоставляет драйвер.
     driver = setup_teardown_driver
 
     # Создаем экземпляр Page Object
     logger.info(f"Создаем экземпляр Page Object")
-    login_page = LoginPage(driver,base_url)
+    login_page = LoginPage(driver,web_base_url)
 
     # Выполняем действия, используя методы Page Object
     login_page.open()

@@ -15,18 +15,34 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-JUICESHOP_BASE_URL = "JUICESHOP_BASE_URL"
+#JUICESHOP_BASE_URL = "JUICESHOP_BASE_URL"
+WEB_BASE_URL = "WEB_BASE_URL"
+API_BASE_URL  = "API_BASE_URL"
 
 @pytest.fixture(scope="session")
-def base_url():
+def api_base_url():
     """
     Получает базовый URL приложения из переменной окружения.
     Если переменная не установлена, выдает ошибку, чтобы избежать
     запуска тестов без цели.
     """
-    url = os.getenv(JUICESHOP_BASE_URL)
+    url = os.getenv(API_BASE_URL)
     if not url:
-        raise ValueError(f"Не установлена переменная окружения {JUICESHOP_BASE_URL}. "
+        raise ValueError(f"Не установлена переменная окружения {API_BASE_URL}. "
+                         "Укажите URL-адрес приложения Juice Shop, например: "
+                         "http://host.docker.internal:8080")
+    return url
+
+@pytest.fixture(scope="session")
+def web_base_url():
+    """
+    Получает базовый URL приложения из переменной окружения.
+    Если переменная не установлена, выдает ошибку, чтобы избежать
+    запуска тестов без цели.
+    """
+    url = os.getenv(WEB_BASE_URL)
+    if not url:
+        raise ValueError(f"Не установлена переменная окружения {WEB_BASE_URL}. "
                          "Укажите URL-адрес приложения Juice Shop, например: "
                          "http://host.docker.internal:8080")
     return url

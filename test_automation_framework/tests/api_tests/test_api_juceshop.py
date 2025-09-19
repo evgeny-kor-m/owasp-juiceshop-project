@@ -1,7 +1,7 @@
 # test_api_juceshop.py
 from test_automation_framework.api.api_service import AuthAPI, BasketAPI, generate_random_email
 
-def test_full_e2e_flow_with_api(base_url, api_session):
+def test_full_e2e_flow_with_api(api_base_url, api_session):
     """
     Тестирование полного End-to-End потока с использованием API.
     """
@@ -10,7 +10,7 @@ def test_full_e2e_flow_with_api(base_url, api_session):
 
     # Шаг 1: Регистрация нового пользователя
     print("1. Регистрация нового пользователя...")
-    auth_api = AuthAPI(api_session, base_url)
+    auth_api = AuthAPI(api_session, api_base_url)
     new_email = generate_random_email()
     password = "MyStrongPassword123"
     register_response = auth_api.register_new_user(new_email, password)
@@ -30,7 +30,7 @@ def test_full_e2e_flow_with_api(base_url, api_session):
     print("    Токен аутентификации добавлен в заголовки сессии.")
 
     # Создание объекта корзины после входа
-    basket_api = BasketAPI(api_session, base_url, basket_id)
+    basket_api = BasketAPI(api_session, api_base_url, basket_id)
 
     # Шаг 3: Добавление товара в корзину
     print("3. Добавление товара в корзину...")
