@@ -17,6 +17,7 @@ def test_user_login(setup_teardown_driver,web_base_url):
     login_page.open()
     login_page.enter_credentials("admin@juice-sh.op", "admin123")
     login_page.click_login()
+    login_page.verify_login_successful()
 
     # Проверяем результат
     # assert "Welcome" in login_page.get_welcome_message() # Предполагаемая проверка

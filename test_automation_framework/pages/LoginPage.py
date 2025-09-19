@@ -18,6 +18,7 @@ class LoginPage:
     LOGIN_BUTTON = (By.ID, "loginButton")
     WELCOME_MESSAGE = (By.CSS_SELECTOR, ".mat-card-header .mat-headline")
     OVERLAY_BACKDROP = (By.CLASS_NAME, "cdk-overlay-backdrop")
+    ACCOUNT_BUTTON = (By.CSS_SELECTOR, "button[aria-label='Show/hide account menu']")
 
 
     # Методы, которые выполняют действия
@@ -78,3 +79,13 @@ class LoginPage:
 
     def get_welcome_message(self):
         return self.driver.find_element(*self.WELCOME_MESSAGE).text
+
+    def verify_login_successful(self):
+        """Проверяем, что логин прошел успешно"""
+        logger.info("Проверяем, что пользователь залогинился")
+        WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located(self.ACCOUNT_BUTTON)
+        )
+        current_url = self.driver.current_url
+        assert "login" not in current_url, f"После логина остались на странице логина: {current_url}"
+        logger.info("Логин прошел успешно")
