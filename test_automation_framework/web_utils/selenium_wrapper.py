@@ -11,7 +11,8 @@ class SeleniumWrapper:
         chrome_options = Options()
 
         if os.environ.get("BROWSER_HEADLESS") == "true":
-            chrome_options.add_argument("--headless")
+            chrome_options.binary_location = "/usr/bin/google-chrome"
+            chrome_options.add_argument("--headless=new")
             chrome_options.add_argument("--no-sandbox")
             chrome_options.add_argument("--disable-dev-shm-usage")
 
