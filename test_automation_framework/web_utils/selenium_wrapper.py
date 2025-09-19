@@ -1,6 +1,7 @@
 # test_automation_framework/web_utils/selenium_wrapper.py
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options as ChromeOptions
 import os
 
 class SeleniumWrapper:
@@ -8,18 +9,19 @@ class SeleniumWrapper:
         self.driver = self._create_driver()
 
     def _create_driver(self):
-        chrome_options = Options()
+        chrome_options = ChromeOptions()
 
         if os.environ.get("BROWSER_HEADLESS") == "true":
-            chrome_options.binary_location = "/usr/bin/google-chrome"
             chrome_options.add_argument("--headless=new")
             chrome_options.add_argument("--no-sandbox")
             chrome_options.add_argument("--disable-dev-shm-usage")
-            chrome_options.add_argument("--user-data-dir=/tmp/user-data-dir")
+            chrome_options.add_argument("--window-size=1920,1080")
+            chrome_options.add_argument("--start-maximized")
 
-        driver = webdriver.Chrome(options=chrome_options)
-        driver.set_window_size(1920, 1080)
-        driver.implicitly_wait(10)
+        driver = webdriver.Chrome(
+            service=webdriver.ChromeService(ChromeDriverManager().install()),
+            options=chrome_options
+        )
         return driver
 
     def get_driver(self):
