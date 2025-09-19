@@ -28,8 +28,8 @@ services:
     environment:     # Set environment variables that the application inside the container needs.
       # Application variables needed for testing.
       - JUICESHOP_BASE_URL=${JUICESHOP_BASE_URL}
-      - API_BASE_URL=${API_BASE_URL}
-      - WEB_BASE_URL=${WEB_BASE_URL}
+      - API_BASE_URL=${API_BASE_URL:-http://host.docker.internal:8080}
+      - WEB_BASE_URL=${WEB_BASE_URL:-http://juice-shop.local:8080}
       # Python-specific environment variables.
       - PYTHONPATH=${PYTHONPATH:-/app}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
