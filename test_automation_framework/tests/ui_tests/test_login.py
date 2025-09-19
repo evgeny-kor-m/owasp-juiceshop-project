@@ -1,4 +1,8 @@
+import logging
 from test_automation_framework.pages.LoginPage import LoginPage
+
+# Logging Settings (you can use a logger from Conftest.py, but for clarity here is your own)
+logger = logging.getLogger(__name__)
 
 #@pytest.mark.ui
 def test_user_login(setup_teardown_driver,base_url):
@@ -6,6 +10,7 @@ def test_user_login(setup_teardown_driver,base_url):
     driver = setup_teardown_driver
 
     # Создаем экземпляр Page Object
+    logger.info(f"Создаем экземпляр Page Object")
     login_page = LoginPage(driver,base_url)
 
     # Выполняем действия, используя методы Page Object

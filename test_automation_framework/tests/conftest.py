@@ -1,8 +1,19 @@
 import pytest
 import os
 import requests
+import logging
 from test_automation_framework.web_utils.selenium_wrapper import SeleniumWrapper
 
+# Logging Settings (performed once for the entire test launch)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('logs/test_log.log'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
 
 JUICESHOP_BASE_URL = "JUICESHOP_BASE_URL"
 

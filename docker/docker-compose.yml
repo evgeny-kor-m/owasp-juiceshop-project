@@ -22,6 +22,7 @@ services:
       - ${ALLURE_RESULTS_PATH:-../allure-results}:/app/allure-results
       - ${ALLURE_REPORT_PATH:-../allure-reports}:/app/allure-reports
       - ${HTML_REPORT_PATH:-../html-reports}:/app/html-reports
+      - ${LOGS_PATH:-../logs}:/app/logs
     # Set environment variables that the application inside the container needs.
     environment:
       # Application variables needed for testing.
