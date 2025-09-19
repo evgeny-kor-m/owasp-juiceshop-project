@@ -1,7 +1,6 @@
 # test_automation_framework/web_utils/selenium_wrapper.py
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
 import os
 
 class SeleniumWrapper:
@@ -16,8 +15,7 @@ class SeleniumWrapper:
             chrome_options.add_argument("--no-sandbox")
             chrome_options.add_argument("--disable-dev-shm-usage")
 
-        service = Service(executable_path="/usr/bin/chromedriver")
-        driver = webdriver.Chrome(service=service, options=chrome_options)
+        driver = webdriver.Chrome(options=chrome_options)
         driver.set_window_size(1920, 1080)
         driver.implicitly_wait(10)
         return driver
