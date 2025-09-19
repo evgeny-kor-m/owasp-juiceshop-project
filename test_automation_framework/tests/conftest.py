@@ -52,11 +52,4 @@ def setup_teardown_driver(request):
 
     yield driver
 
-    if request.node.rep_call.failed:
-        screenshot_dir = "screenshots"
-        if not os.path.exists(screenshot_dir):
-            os.makedirs(screenshot_dir)
-        test_name = request.node.name
-        driver.save_screenshot(f"{screenshot_dir}/{test_name}.png")
-
     web_wrapper.quit_driver()
