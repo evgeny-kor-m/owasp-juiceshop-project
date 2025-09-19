@@ -26,6 +26,8 @@ RUN wget -O allure.tgz https://github.com/allure-framework/allure2/releases/down
 # Installation Google Chrome Stable
 # Required for selenium tests if they use Google Chrome.
 RUN apt-get update && apt-get install -y \
+    gnupg \
+    unzip \
     && curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
     && apt-get update && apt-get install -y google-chrome-stable \
