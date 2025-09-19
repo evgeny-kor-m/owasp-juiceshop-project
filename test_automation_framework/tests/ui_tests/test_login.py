@@ -15,7 +15,7 @@ def test_user_login(setup_teardown_driver,web_base_url):
 
     # Выполняем действия, используя методы Page Object
     login_page.open()
-    login_page.enter_credentials("test@example.com", "password")
+    login_page.enter_credentials("admin@juice-sh.op", "admin123")
     login_page.click_login()
 
     # Проверяем результат
