@@ -23,6 +23,13 @@ RUN wget -O allure.tgz https://github.com/allure-framework/allure2/releases/down
     && ln -s /opt/allure/bin/allure /usr/local/bin/allure \
     && rm allure.tgz
 
+# Installation Google Chrome Stable
+# Required for selenium tests if they use Google Chrome.
+RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable \
+    && rm -rf /var/lib/apt/lists/*
 
 # Устанавливаем рабочую директорию в контейнере
 WORKDIR /app

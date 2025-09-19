@@ -1,7 +1,6 @@
-import pytest
 from test_automation_framework.pages.LoginPage import LoginPage
 
-@pytest.mark.ui
+#@pytest.mark.ui
 def test_user_login(setup_teardown_driver):
     # 'setup_teardown_driver' - это фикстура, которая предоставляет драйвер.
     driver = setup_teardown_driver
