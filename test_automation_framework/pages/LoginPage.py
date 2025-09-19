@@ -22,6 +22,9 @@ class LoginPage:
     def open(self):
         try:
             self.driver.get(self.url)
+            html_content = self.driver.page_source
+            print(html_content)
+            logger.info(html_content)
         except Exception as e:
             logger.error(f"Failed to open page with ex: {e} \n Url:{self.url}")
             raise
