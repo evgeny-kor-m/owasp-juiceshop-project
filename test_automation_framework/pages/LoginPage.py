@@ -24,9 +24,10 @@ class LoginPage:
             self.driver.get(self.url)
             html_content = self.driver.page_source
             print(html_content)
+            logger.info(f"open page with Url:{self.driver.current_url}")
             logger.info(html_content)
         except Exception as e:
-            logger.error(f"Failed to open page with ex: {e} \n Url:{self.url}")
+            logger.error(f"Failed to open page with ex: {e} \n Url:{self.driver.current_url}")
             raise
 
     def enter_credentials(self, email, password):
@@ -43,7 +44,7 @@ class LoginPage:
             password_element = wait.until(EC.visibility_of_element_located(self._password_field))
             password_element.send_keys(password)
         except Exception as e:
-            logger.error(f"Failed to enter credentials: {e}")
+            logger.error(f"Failed to enter credentials Url:{self.driver.current_url}\n: {e}")
             raise
 
     def click_login(self):
