@@ -23,14 +23,14 @@ class LoginPage:
         try:
             self.driver.get(self.url)
             html_content = self.driver.page_source
-            print(html_content)
             logger.info(f"open page with Url:{self.driver.current_url}")
-            logger.info(html_content)
+            #logger.info(html_content)
         except Exception as e:
             logger.error(f"Failed to open page with ex: {e} \n Url:{self.driver.current_url}")
             raise
 
     def enter_credentials(self, email, password):
+        logger.info(f"enter_credentials Url:{self.driver.current_url}")
         try:
             wait = WebDriverWait(self.driver, 10)
             # self.driver.find_element(*self._email_field).send_keys(email)
