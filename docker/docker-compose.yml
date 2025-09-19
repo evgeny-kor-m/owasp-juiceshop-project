@@ -24,8 +24,7 @@ services:
       - ${HTML_REPORT_PATH:-../html-reports}:/app/html-reports
       - ${LOGS_PATH:-../logs}:/app/logs
     extra_hosts:
-      #- "juice-shop.local:host-gateway" # Mapping Hostname on IP hosts
-      - "juice-shop.local:172.18.0.3"
+      - "juice-shop.local:host-gateway" # Mapping Hostname on IP hosts
     environment:     # Set environment variables that the application inside the container needs.
       # Application variables needed for testing.
       - JUICESHOP_BASE_URL=${JUICESHOP_BASE_URL}
