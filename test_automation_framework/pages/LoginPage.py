@@ -13,10 +13,12 @@ class LoginPage:
         self.url = f"{base_url}/#/login"
 
     # Локаторы элементов на странице
-    _email_field = (By.ID, "email")
-    _password_field = (By.ID, "password")
-    _login_button = (By.ID, "loginButton")
-    _welcome_message = (By.CSS_SELECTOR, ".mat-card-header .mat-headline")
+    USERNAME_INPUT = (By.ID, "email")
+    PASSWORD_INPUT = (By.ID, "password")
+    LOGIN_BUTTON = (By.ID, "loginButton")
+    WELCOME_MESSAGE = (By.CSS_SELECTOR, ".mat-card-header .mat-headline")
+    OVERLAY_BACKDROP = (By.CLASS_NAME, "cdk-overlay-backdrop")
+
 
     # Методы, которые выполняют действия
     def open(self):
@@ -37,11 +39,11 @@ class LoginPage:
             # self.driver.find_element(*self._password_field).send_keys(password)
 
             # Явное ожидание, пока поле email не станет видимым и доступным для клика.
-            email_element = wait.until(EC.element_to_be_clickable(self._email_field))
+            email_element = wait.until(EC.element_to_be_clickable(self.USERNAME_INPUT))
             email_element.send_keys(email)
 
             # Явное ожидание, пока поле password не станет видимым.
-            password_element = wait.until(EC.visibility_of_element_located(self._password_field))
+            password_element = wait.until(EC.visibility_of_element_located(self.PASSWORD_INPUT))
             password_element.send_keys(password)
         except Exception as e:
             logger.error(f"Failed to enter credentials Url:{self.driver.current_url}\n: {e}")
@@ -49,12 +51,21 @@ class LoginPage:
 
     def click_login(self):
         try:
-            wait = WebDriverWait(self.driver, 10)
-            login_button = wait.until(EC.element_to_be_clickable(self._login_button))
+            logger.info("Ждем исчезновения оверлея, если он есть")
+            WebDriverWait(self.driver, 5).until(
+                EC.invisibility_of_element_located(self.OVERLAY_BACKDROP)
+            )
+        except:
+            logger.warning("Оверлей не исчез — возможно его и не было")
+
+        try:
+            logger.info("Кликаем по кнопке логина")
+            login_button = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable(self.LOGIN_BUTTON)   )
             login_button.click()
         except Exception as e:
-            logger.error(f"Failed to click login button: {e}")
+            logger.error(f"Не удалось кликнуть по кнопке логина: {e}")
             raise
 
     def get_welcome_message(self):
-        return self.driver.find_element(*self._welcome_message).text
+        return self.driver.find_element(*self.WELCOME_MESSAGE).text
