@@ -1,4 +1,10 @@
+import logging
+
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+logger = logging.getLogger(__name__)
 
 class LoginPage:
     # Конструктор, который принимает драйвер
@@ -17,8 +23,21 @@ class LoginPage:
         self.driver.get(self.url)
 
     def enter_credentials(self, email, password):
-        self.driver.find_element(*self._email_field).send_keys(email)
-        self.driver.find_element(*self._password_field).send_keys(password)
+        try:
+            wait = WebDriverWait(self.driver, 10)
+            # self.driver.find_element(*self._email_field).send_keys(email)
+            # self.driver.find_element(*self._password_field).send_keys(password)
+
+            # Явное ожидание, пока поле email не станет видимым и доступным для клика.
+            email_element = wait.until(EC.element_to_be_clickable(self._email_field))
+            email_element.send_keys(email)
+
+            # Явное ожидание, пока поле password не станет видимым.
+            password_element = wait.until(EC.visibility_of_element_located(self._password_field))
+            password_element.send_keys(password)
+        except Exception as e:
+            logger.error(f"Failed to enter credentials: {e}")
+            raise
 
     def click_login(self):
         self.driver.find_element(*self._login_button).click()
