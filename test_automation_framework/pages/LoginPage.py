@@ -20,7 +20,11 @@ class LoginPage:
 
     # Методы, которые выполняют действия
     def open(self):
-        self.driver.get(self.url)
+        try:
+            self.driver.get(self.url)
+        except Exception as e:
+            logger.error(f"Failed to open page with ex: {e} \n Url:{self.url}")
+            raise
 
     def enter_credentials(self, email, password):
         try:
