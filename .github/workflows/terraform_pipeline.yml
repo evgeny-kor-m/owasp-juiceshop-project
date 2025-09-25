@@ -24,14 +24,14 @@ jobs:
       - name: Terraform Init
         id: init
         run: terraform init
-        working-directory: ./terraform/modules/k6-job
+        working-directory: ./terraform/environments/dev
         env:
           KUBECONFIG: ${{ secrets.KUBECONFIG }}
 
       - name: Terraform Apply
         id: apply
         run: terraform apply --auto-approve
-        working-directory: ./terraform/modules/k6-job
+        working-directory: ./terraform/environments/dev
         env:
           KUBECONFIG: ${{ secrets.KUBECONFIG }}
 
@@ -48,6 +48,6 @@ jobs:
         if: always() # Этот шаг выполнится всегда, независимо от результата предыдущих
         id: destroy
         run: terraform destroy --auto-approve
-        working-directory: ./terraform/modules/k6-job
+        working-directory: ./terraform/environments/dev
         env:
           KUBECONFIG: ${{ secrets.KUBECONFIG }}
