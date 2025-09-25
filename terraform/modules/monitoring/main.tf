@@ -1,4 +1,4 @@
-# main.tf
+# terraform/modules/monitoring/main.tf
 
 # Указываем необходимые провайдеры
 terraform {

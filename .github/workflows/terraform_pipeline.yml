@@ -10,8 +10,9 @@ on:
   workflow_dispatch: # Позволяет запускать пайплайн вручную из UI GitHub
 
 jobs:
-  deploy_infra:
+  deploy_and_test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -19,31 +20,33 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
+      # --- Шаг 1: Развертывание инфраструктуры ---
       - name: Terraform Init
+        id: init
         run: terraform init
-        working-directory: ./terraform/environments/dev
+        working-directory: ./terraform/modules/k6-job
         env:
           KUBECONFIG: ${{ secrets.KUBECONFIG }}
 
       - name: Terraform Apply
+        id: apply
         run: terraform apply --auto-approve
-        working-directory: ./terraform/environments/dev
+        working-directory: ./terraform/modules/k6-job
         env:
           KUBECONFIG: ${{ secrets.KUBECONFIG }}
 
-  run_performance_test:
-    needs: deploy_infra
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      # --- Шаг 2: Запуск и мониторинг теста ---
+      - name: Run k6 Job
+        id: k6_run
+        # Используем kubectl для мониторинга Job, созданного Terraform
+        run: |
+          kubectl wait --for=condition=complete job/k6-test-job --timeout=10m -n k6-tests
+          kubectl logs job/k6-test-job -n k6-tests
 
-      # Здесь будут шаги для запуска нагрузочного теста k6
-      # После выполнения тестов, вы можете добавить шаг
-      # для получения отчетов и их загрузки.
-
+      # --- Шаг 3: Уничтожение ресурсов ---
       - name: Terraform Destroy
-        if: always() # Уничтожаем ресурсы, даже если предыдущий шаг провалился
+        if: always() # Этот шаг выполнится всегда, независимо от результата предыдущих
+        id: destroy
         run: terraform destroy --auto-approve
         working-directory: ./terraform/modules/k6-job
         env:
