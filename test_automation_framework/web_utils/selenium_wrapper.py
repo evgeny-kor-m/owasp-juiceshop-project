@@ -36,6 +36,13 @@ class SeleniumWrapper:
         chrome_options.add_argument("--disable-plugins")
         chrome_options.add_argument("--disable-web-security")
         chrome_options.add_argument("--disable-features=VizDisplayCompositor")
+        chrome_options.add_argument("--disable-features=PasswordLeakDetection")
+        # 2. Отключаем всплывающие окна для сохранения паролей
+        prefs = {
+            "credentials_enable_service": False,
+            "profile.password_manager_enabled": False,
+        }
+        chrome_options.add_experimental_option("prefs", prefs)
         chrome_options.add_argument("--remote-debugging-port=0")  # Let Chrome choose port
         chrome_options.add_argument("--no-first-run")
         chrome_options.add_argument("--no-default-browser-check")
