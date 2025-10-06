@@ -10,7 +10,7 @@ def test_user_login(setup_teardown_driver,web_base_url):
     driver = setup_teardown_driver
 
     # Создаем экземпляр Page Object
-    logger.info(f"Создаем экземпляр Page Object")
+    logger.info(f"Create an instance of Page Object")
     login_page = LoginPage(driver,web_base_url)
 
     # Выполняем действия, используя методы Page Object

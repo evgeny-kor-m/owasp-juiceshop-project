@@ -76,8 +76,10 @@ class BasePage:
         """
         element = self.wait_for_visible(locator, timeout)
         try:
+            logger.info(f"Entered text '{clear_first}' into element: {locator}")
             if clear_first:
                 element.clear()
+                logger.info(f"Inside if Entered text '{clear_first}' into element: {locator}")
                 logger.debug(f"Cleared input field: {locator}")
             element.send_keys(text)
             logger.info(f"Entered text '{text}' into element: {locator}")
