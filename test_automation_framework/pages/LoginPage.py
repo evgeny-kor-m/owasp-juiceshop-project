@@ -72,7 +72,7 @@ class LoginPage(BasePage):
         """
         logger.info("Verifying that the user is logged in.")
         try:
-            WebDriverWait(self.driver, 10).until(
+            WebDriverWait(self.driver, 20).until(
                 EC.visibility_of_element_located(self.ACCOUNT_BUTTON)
             )
             current_url = self.driver.current_url

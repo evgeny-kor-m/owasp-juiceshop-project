@@ -1,5 +1,5 @@
 # test_automation_framework/web_utils/selenium_wrapper.py
-# test_automation_framework/web_utils/selenium_wrapper.py
+
 import os
 import shutil
 import tempfile
@@ -37,7 +37,7 @@ class SeleniumWrapper:
         chrome_options.add_argument("--disable-web-security")
         chrome_options.add_argument("--disable-features=VizDisplayCompositor")
         chrome_options.add_argument("--disable-features=PasswordLeakDetection")
-        # 2. Отключаем всплывающие окна для сохранения паролей
+        # Disable pop-up windows for saving passwords
         prefs = {
             "credentials_enable_service": False,
             "profile.password_manager_enabled": False,
