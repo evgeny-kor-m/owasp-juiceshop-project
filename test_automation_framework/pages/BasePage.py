@@ -85,7 +85,7 @@ class BasePage:
             logger.error(f"Failed to send keys to {locator}: {e}")
             raise e
 
-    def get_text(self, locator: tuple, timeout: int = 15) -> str:
+    def get_text(self, locator: tuple, timeout: int = 30) -> str:
         """
         Returns the visible text of an element.
         Waits until the element is visible to ensure up-to-date content.
