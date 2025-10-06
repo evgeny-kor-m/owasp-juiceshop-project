@@ -1,5 +1,5 @@
 import logging
-from test_automation_framework.pages.LoginPage import LoginPage
+from test_automation_framework.pages.login_page import LoginPage
 
 # Logging Settings (you can use a logger from Conftest.py, but for clarity here is your own)
 logger = logging.getLogger(__name__)

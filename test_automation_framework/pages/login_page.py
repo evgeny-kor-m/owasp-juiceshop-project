@@ -1,4 +1,4 @@
-# test_automation_framework/pages/LoginPage.py
+# test_automation_framework/pages/login_page.py
 
 import logging
 
@@ -6,7 +6,7 @@ from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from .BasePage import BasePage
+from .base_page import BasePage
 
 logger = logging.getLogger(__name__)
 
@@ -44,8 +44,8 @@ class LoginPage(BasePage):
         """
         logger.info(f"Entering credentials: {username}/****")
         try:
-            self.send_keys(self.USERNAME_INPUT, username)
-            self.send_keys(self.PASSWORD_INPUT, password)
+            self.input_text(self.USERNAME_INPUT, username)
+            self.input_text(self.PASSWORD_INPUT, password)
             logger.debug("Credentials entered successfully.")
         except Exception as e:
             logger.error(f"Failed to enter credentials on URL {self.driver.current_url}: {e}")
