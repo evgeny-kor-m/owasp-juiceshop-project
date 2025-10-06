@@ -1,6 +1,8 @@
 # test_automation_framework/pages/LoginPage.py
 
 import logging
+
+from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -66,18 +68,37 @@ class LoginPage(BasePage):
 
     def verify_login_successful(self):
         """
-        Verifies that the login process completed successfully:
-        - Waits for the account button to appear.
-        - Confirms that the current URL has changed from the login page.
+        Verifies a successful login by:
+        1. Waiting for the URL to change from the initial login page (redirect detection).
+        2. Waiting for the account button to appear on the new page (UI confirmation).
         """
-        logger.info("Verifying that the user is logged in.")
+        logger.info("Verifying that the user has logged in and waiting for redirect.")
+        initial_url = self.driver.current_url  # Store the current login page URL
+
         try:
-            WebDriverWait(self.driver, 20).until(
+            # --- Step 1: Wait until the URL changes from the login page (10 seconds) ---
+            # Confirms that the redirect to a new page has started.
+            WebDriverWait(self.driver, 10).until(
+                EC.url_changes(initial_url)
+            )
+            logger.info(f"URL changed to: {self.driver.current_url}. Waiting for account button...")
+
+            # --- Step 2: Wait until the account button becomes visible (10 seconds) ---
+            # Confirms that the target page has fully loaded.
+            WebDriverWait(self.driver, 10).until(
                 EC.visibility_of_element_located(self.ACCOUNT_BUTTON)
             )
+
             current_url = self.driver.current_url
-            assert "login" not in current_url, f"Still on login page after login attempt: {current_url}"
-            logger.info("Login successful.")
+            # Ensure we are no longer on the login page
+            assert "login" not in current_url.lower(), f"Still on the login page: {current_url}"
+            logger.info("Login verified successfully.")
+
+        except TimeoutException as e:
+            # Use TimeoutException explicitly for better error reporting
+            current_url = self.driver.current_url
+            logger.error(f"Timeout waiting for successful login. Current URL: {current_url}. Exception: {e}")
+            raise AssertionError(f"Timeout waiting for login success. Current URL: {current_url}. Error: {e}")
         except Exception as e:
-            logger.error(f"Login verification failed: {e}")
+            logger.error(f"Login verification failed. Current URL: {self.driver.current_url}. Error: {e}")
             raise
