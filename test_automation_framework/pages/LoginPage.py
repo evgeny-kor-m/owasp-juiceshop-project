@@ -1,3 +1,4 @@
+# test_automation_framework/pages/LoginPage.py
 import logging
 
 from selenium.webdriver.common.by import By
@@ -18,6 +19,7 @@ class LoginPage:
     LOGIN_BUTTON = (By.ID, "loginButton")
     WELCOME_MESSAGE = (By.CSS_SELECTOR, ".mat-card-header .mat-headline")
     OVERLAY_BACKDROP = (By.CLASS_NAME, "cdk-overlay-backdrop")
+    OVERLAY_BACKDROP_ACTIVE = (By.CSS_SELECTOR, ".cdk-overlay-backdrop.cdk-overlay-backdrop-showing")
     ACCOUNT_BUTTON = (By.CSS_SELECTOR, "button[aria-label='Show/hide account menu']")
 
 
@@ -55,19 +57,25 @@ class LoginPage:
 
     def click_login(self):
         try:
-            logger.info("Ждем исчезновения оверлея, если он есть")
-            WebDriverWait(self.driver, 5).until(
-                EC.invisibility_of_element_located(self.OVERLAY_BACKDROP)
+            logger.info("Ждем исчезновения активного оверлея, если он есть")
+            # Увеличиваем таймаут до 10 секунд и используем более специфичный локатор
+            WebDriverWait(self.driver, 10).until(
+                EC.invisibility_of_element_located(self.OVERLAY_BACKDROP_ACTIVE)
             )
-        except:
-            logger.warning("Оверлей не исчез — возможно его и не было")
+            logger.info("Активный оверлей исчез.")
+        except Exception as e:
+            # Если оверлей не исчез за 10 секунд, мы просто логируем это, но не падаем
+            # В противном случае, ElementClickInterceptedException поймается позже.
+            logger.warning(f"Активный оверлей не исчез за 10 секунд. Продолжаем. Ex: {e}")
 
         try:
             logger.info("Кликаем по кнопке логина")
             login_button = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable(self.LOGIN_BUTTON)   )
+                EC.element_to_be_clickable(self.LOGIN_BUTTON)   )
             login_button.click()
         except Exception as e:
+            # Ваш код обработки ошибки JS-кликом — это хороший fallback,
+            # но сначала нужно устранить проблему синхронизации.
             logger.error(f"Не удалось кликнуть по кнопке логина: {e}")
             try:
                 logger.warning("Пробуем кликнуть через JavaScript")
