@@ -79,7 +79,7 @@ clean-all: ## complete cleaning (including images). Recommendation: Use carefull
 
 clean: ##
 	@echo "$(YELLOW)🧹 Cleanup...$(NC)"
-	sudo rm -rf html-reports/* screenshots/* allure-results/* allure-report/* logs/*
+	sudo rm -rf html-reports/* screenshots/* allure-results/* allure-reports/* logs/*
 	sudo find . -type d -name "__pycache__" -prune -exec rm -rf {} +
 	find . -name "*.pyc" -delete
 
