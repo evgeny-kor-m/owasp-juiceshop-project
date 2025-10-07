@@ -2,7 +2,6 @@
 
 import logging
 import pytest
-from selenium.webdriver.common.by import By
 from test_automation_framework.pages.products_page import ProductsPage
 from test_automation_framework.pages.basket_page import BasketPage
 from test_automation_framework.pages.login_page import LoginPage
@@ -25,9 +24,9 @@ class TestShoppingCart:
         login_page.click_login()
         login_page.verify_login_successful()
 
-        # At the start of the test after login
-        driver.save_screenshot("/app/screenshots/after_login.png")
-        print(f"Overlays on page: {len(driver.find_elements(By.CSS_SELECTOR, '.cdk-overlay-backdrop'))}")
+        # # At the start of the test after login
+        # driver.save_screenshot("/app/screenshots/after_login.png")
+        # print(f"Overlays on page: {len(driver.find_elements(By.CSS_SELECTOR, '.cdk-overlay-backdrop'))}")
 
         # # Add after login:
         # print("=" * 80)
