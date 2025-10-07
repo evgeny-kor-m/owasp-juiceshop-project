@@ -1,132 +1,160 @@
 # test_automation_framework/pages/base_page.py
-
+"""
+FILE: pages/base_page.py
+Base Page Object providing common utilities for all pages:
+- overlay handling
+- stable click actions
+- input helpers
+- element waiting
+"""
 import logging
-
-from selenium.common import TimeoutException
+import time
+from selenium.common.exceptions import TimeoutException, ElementClickInterceptedException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 
 logger = logging.getLogger(__name__)
 
+
 class BasePage:
-    # Universal locator for active blocking overlay (based on logs and UI behavior)
+    """Base class for all Page Objects with improved handling of blocking overlays."""
+
+    # Locators for known blocking elements
     ACTIVE_OVERLAY_BACKDROP = (By.CSS_SELECTOR, ".cdk-overlay-backdrop.cdk-overlay-backdrop-showing")
+    WELCOME_BANNER = (By.CSS_SELECTOR, "div.mat-dialog-container, mat-dialog-container")
+    DISMISS_BUTTON = (By.XPATH, "//button[contains(., 'Dismiss')] | //button[@aria-label='Close Welcome Banner']")
+    COOKIE_DISMISS = (By.CSS_SELECTOR, ".cc-btn.cc-dismiss")
 
     def __init__(self, driver: WebDriver):
         self.driver = driver
-        # Extended the default timeout to 20 seconds for more reliability
         self.wait = WebDriverWait(driver, 20)
 
-    def _wait_for_known_blockers_to_disappear(self):
-        """Waits for known blocking overlay elements to disappear."""
-        logger.debug("Checking for active blocking overlays...")
+    def close_welcome_banner(self):
+        """Closes the Welcome Banner if it is present."""
         try:
-            self.wait.until(EC.invisibility_of_element_located(self.ACTIVE_OVERLAY_BACKDROP))
-            logger.debug("Active overlay has disappeared.")
-        except Exception:
-            logger.debug("Blocking overlay not detected or did not disappear within the timeout.")
+            logger.debug("Attempting to close Welcome Banner...")
+
+            # Check if banner exists
+            banner = WebDriverWait(self.driver, 3).until(
+                EC.presence_of_element_located(self.WELCOME_BANNER)
+            )
+
+            if banner.is_displayed():
+                # Click the Dismiss button
+                dismiss_btn = WebDriverWait(self.driver, 3).until(
+                    EC.element_to_be_clickable(self.DISMISS_BUTTON)
+                )
+                dismiss_btn.click()
+                logger.info("✅ Welcome Banner dismissed successfully")
+
+                # Wait until overlay disappears
+                WebDriverWait(self.driver, 5).until(
+                    EC.invisibility_of_element_located(self.ACTIVE_OVERLAY_BACKDROP)
+                )
+                time.sleep(0.5)  # Extra pause for stability
+
+        except TimeoutException:
+            logger.debug("Welcome Banner not found or already closed")
+        except Exception as e:
+            logger.warning(f"Could not close Welcome Banner: {e}")
+
+    def dismiss_cookie_banner(self):
+        """Dismisses the cookie consent banner if present."""
+        try:
+            cookie_btn = WebDriverWait(self.driver, 2).until(
+                EC.element_to_be_clickable(self.COOKIE_DISMISS)
+            )
+            cookie_btn.click()
+            logger.debug("Cookie banner dismissed")
+        except TimeoutException:
+            logger.debug("Cookie banner not found")
+        except Exception as e:
+            logger.debug(f"Could not dismiss cookie banner: {e}")
+
+    def close_all_overlays(self):
+        """Attempts to close all known blocking overlays."""
+        # 1. Close the Welcome Banner
+        self.close_welcome_banner()
+
+        # 2. Close the Cookie Banner
+        self.dismiss_cookie_banner()
+
+        # 3. If overlays still exist, send ESC key
+        try:
+            overlays = self.driver.find_elements(*self.ACTIVE_OVERLAY_BACKDROP)
+            if overlays and any(o.is_displayed() for o in overlays):
+                logger.debug("Overlays still visible, sending ESC key...")
+                ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
+                time.sleep(0.5)
+        except Exception as e:
+            logger.debug(f"Error while checking overlays: {e}")
 
     def click(self, locator: tuple, timeout: int = 20):
         """
-        Universal click method:
-        1. Waits for known blocking overlays to disappear.
-        2. Waits until the target element becomes clickable (EC.element_to_be_clickable).
-        3. Uses a JavaScript click as a fallback if the normal click fails.
+        Universal click method with overlay handling:
+        1. Closes all overlays
+        2. Scrolls to the element
+        3. Performs standard click
+        4. Falls back to JavaScript click if necessary
         """
-        self._wait_for_known_blockers_to_disappear()
-
+        self.close_all_overlays()
         try:
             element = WebDriverWait(self.driver, timeout).until(
                 EC.element_to_be_clickable(locator)
             )
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
+            # time.sleep(0.3)
             element.click()
-            logger.info(f"Successful click on element located by: {locator}")
-        except Exception as e:
-            logger.warning(f"Failed to click element {locator}. Attempting JavaScript click as fallback...")
+            logger.info(f"✅ Clicked element: {locator}")
+        except (TimeoutException, ElementClickInterceptedException) as e:
+            logger.warning(f"⚠️ Standard click failed for {locator}. Trying JS click...")
             try:
                 element = self.wait.until(EC.presence_of_element_located(locator))
                 self.driver.execute_script("arguments[0].click();", element)
-                logger.info("Successful click via JavaScript fallback.")
+                logger.info("✅ JavaScript click succeeded")
             except Exception as js_e:
-                logger.error(f"JavaScript click also failed. Original exception: {e}")
-                raise e
+                logger.error(f"❌ Both clicks failed. Original: {e}, JS: {js_e}")
+                raise
 
     def wait_for_visible(self, locator: tuple, timeout: int = 20):
-        """
-        Waits until the specified element becomes visible on the page.
-        Returns the WebElement if visible, or raises TimeoutException if not found.
-        """
-        logger.debug(f"Waiting for element to become visible: {locator}")
+        """Waiting for an element to be visible"""
+        logger.debug(f"Waiting for element to be visible: {locator}")
         try:
             element = WebDriverWait(self.driver, timeout).until(
                 EC.visibility_of_element_located(locator)
             )
             logger.debug(f"Element is visible: {locator}")
             return element
-        except Exception as e:
-            logger.error(f"Element not visible within {timeout}s: {locator}")
-            raise e
+        except TimeoutException:
+            logger.error(f"❌ Element not visible within {timeout}s: {locator}")
+            raise
 
     def input_text(self, locator: tuple, text: str, clear_first: bool = True, timeout: int = 20):
-        """
-        Universal method for entering text into an input field:
-        1. Waits for the element to be visible.
-        2. Optionally clears the input before typing.
-        3. Sends the specified text.
-        """
+        """Types text into an input field with optional clearing."""
         element = self.wait_for_visible(locator, timeout)
         try:
             if clear_first:
                 element.clear()
                 logger.debug(f"Cleared input field: {locator}")
             element.send_keys(text)
-            logger.info(f"Entered text '{text}' into element: {locator}")
+            logger.info(f"✅ Entered text into element: {locator}")
         except Exception as e:
-            logger.error(f"Failed to send keys to {locator}: {e}")
-            raise e
+            logger.error(f"❌ Failed to input text to {locator}: {e}")
+            raise
 
-    def get_text(self, locator: tuple, timeout: int = 30) -> str:
-        """
-        Returns the visible text of an element.
-        Waits until the element is visible to ensure up-to-date content.
-        """
+    def get_text(self, locator: tuple, timeout: int = 20) -> str:
+        """Retrieves visible text from an element."""
         element = self.wait_for_visible(locator, timeout)
         text = element.text.strip()
         logger.debug(f"Text of element {locator}: '{text}'")
         return text
 
-    def close_welcome_banner(self):
-        """Close the welcome banner if there is one"""
-        try:
-            close_button = (By.CSS_SELECTOR, "button[aria-label='Close Welcome Banner']")
-            WebDriverWait(self.driver, 3).until(
-                EC.element_to_be_clickable(close_button)
-            ).click()
-        except TimeoutException:
-            pass
-
-    def dismiss_cookie_banner(self):
-        """Closing the cookie banner"""
-        try:
-            cookie_button = (By.CSS_SELECTOR, ".cc-btn.cc-dismiss")
-            WebDriverWait(self.driver, 3).until(
-                EC.element_to_be_clickable(cookie_button)
-            ).click()
-        except TimeoutException:
-            pass
-
-    def find_element(self, locator):
-        """Поиск элемента с ожиданием"""
-        return self.wait.until(EC.presence_of_element_located(locator))
-
-    def find_elements(self, locator):
-        """Поиск множества элементов"""
-        return self.wait.until(EC.presence_of_all_elements_located(locator))
-
-    def is_element_visible(self, locator, timeout=5):
-        """Проверка видимости элемента"""
+    def is_element_visible(self, locator: tuple, timeout: int = 5) -> bool:
+        """Checking the visibility of an element"""
         try:
             WebDriverWait(self.driver, timeout).until(
                 EC.visibility_of_element_located(locator)
@@ -134,3 +162,11 @@ class BasePage:
             return True
         except TimeoutException:
             return False
+
+    def find_element(self, locator: tuple):
+        """Search for an element with expectation"""
+        return self.wait.until(EC.presence_of_element_located(locator))
+
+    def find_elements(self, locator: tuple):
+        """Search for multiple elements with expectation"""
+        return self.wait.until(EC.presence_of_all_elements_located(locator))

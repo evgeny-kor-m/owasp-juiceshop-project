@@ -1,8 +1,11 @@
 # test_automation_framework/pages/login_page.py
 
+# ============================================
+# FILE: pages/login_page.py
+# ============================================
 import logging
-
-from selenium.common import TimeoutException
+import time
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -10,95 +13,83 @@ from .base_page import BasePage
 
 logger = logging.getLogger(__name__)
 
+
 class LoginPage(BasePage):
-    """Page Object representing the Login page."""
+    """Page Object representing the Login Page of the application."""
+
+    # Locators
+    USERNAME_INPUT = (By.ID, "email")
+    PASSWORD_INPUT = (By.ID, "password")
+    LOGIN_BUTTON = (By.ID, "loginButton")
+    ACCOUNT_BUTTON = (By.CSS_SELECTOR, "button[aria-label='Show/hide account menu']")
 
     def __init__(self, driver, base_url):
         super().__init__(driver)
         self.url = f"{base_url}/#/login"
 
-    # Locators for page elements
-    USERNAME_INPUT = (By.ID, "email")
-    PASSWORD_INPUT = (By.ID, "password")
-    LOGIN_BUTTON = (By.ID, "loginButton")
-    WELCOME_MESSAGE = (By.CSS_SELECTOR, ".mat-card-header .mat-headline")
-    ACCOUNT_BUTTON = (By.CSS_SELECTOR, "button[aria-label='Show/hide account menu']")
-
-    # Page actions
     def open(self):
-        """Opens the login page and verifies that it is loaded."""
+        """Opens the login page and verifies the correct URL was loaded."""
         try:
             self.driver.get(self.url)
-            logger.info(f"Opening login page: {self.url}")
+            logger.info(f"📄 Opening login page: {self.url}")
+
             current_url = self.driver.current_url
-            assert "login" in current_url, f"Expected login page, but opened: {current_url}"
-            logger.info("Login page opened successfully.")
+            assert "login" in current_url.lower(), f"Expected login page, but got: {current_url}"
+            logger.info("✅ Login page opened successfully.")
+
         except Exception as e:
-            logger.error(f"Failed to open login page. Exception: {e}, Current URL: {self.driver.current_url}")
+            logger.error(f"❌ Failed to open login page: {e}")
             raise
 
     def enter_credentials(self, username: str, password: str):
-        """
-        Enters the username and password into their respective fields.
-        Uses BasePage.send_keys() for reliability.
-        """
-        logger.info(f"Entering credentials: {username}/****")
+        """Enters user credentials into username and password fields."""
+        logger.info(f"🔑 Entering credentials for user: {username}/****")
         try:
             self.input_text(self.USERNAME_INPUT, username)
             self.input_text(self.PASSWORD_INPUT, password)
-            logger.debug("Credentials entered successfully.")
+            logger.debug("✅ Credentials entered successfully.")
         except Exception as e:
-            logger.error(f"Failed to enter credentials on URL {self.driver.current_url}: {e}")
+            logger.error(f"❌ Failed to enter credentials: {e}")
             raise
 
     def click_login(self):
-        """Clicks on the Login button using the BasePage click method."""
-        logger.info("Clicking on the login button.")
+        """Clicks the Login button."""
+        logger.info("🖱️ Clicking the Login button...")
         self.click(self.LOGIN_BUTTON)
-
-    def get_welcome_message(self) -> str:
-        """Returns the welcome message text displayed on the page."""
-        try:
-            text = self.get_text(self.WELCOME_MESSAGE)
-            logger.info(f"Welcome message retrieved: '{text}'")
-            return text
-        except Exception as e:
-            logger.error(f"Failed to retrieve welcome message: {e}")
-            raise
 
     def verify_login_successful(self):
         """
-        Verifies a successful login by:
-        1. Waiting for the URL to change from the initial login page (redirect detection).
-        2. Waiting for the account button to appear on the new page (UI confirmation).
+        Verifies successful login:
+        1. Waits for the URL to change (redirect)
+        2. Waits for the account button to appear
+        3. Closes Welcome Banner and other overlays
         """
-        logger.info("Verifying that the user has logged in and waiting for redirect.")
-        initial_url = self.driver.current_url  # Store the current login page URL
+        logger.info("🔍 Verifying login success...")
+        initial_url = self.driver.current_url
 
         try:
-            # --- Step 1: Wait until the URL changes from the login page (10 seconds) ---
-            # Confirms that the redirect to a new page has started.
-            WebDriverWait(self.driver, 10).until(
-                EC.url_changes(initial_url)
-            )
-            logger.info(f"URL changed to: {self.driver.current_url}. Waiting for account button...")
+            # Step 1: Wait for redirect
+            WebDriverWait(self.driver, 10).until(EC.url_changes(initial_url))
+            logger.info(f"✅ URL changed to: {self.driver.current_url}")
 
-            # --- Step 2: Wait until the account button becomes visible (10 seconds) ---
-            # Confirms that the target page has fully loaded.
+            # Step 2: Wait for account button
             WebDriverWait(self.driver, 10).until(
                 EC.visibility_of_element_located(self.ACCOUNT_BUTTON)
             )
 
             current_url = self.driver.current_url
-            # Ensure we are no longer on the login page
-            assert "login" not in current_url.lower(), f"Still on the login page: {current_url}"
-            logger.info("Login verified successfully.")
+            assert "login" not in current_url.lower(), f"Still on login page: {current_url}"
+            logger.info("✅ Login verified successfully.")
+
+            # Step 3: Close any post-login popups
+            time.sleep(1)
+            self.close_welcome_banner()
+            self.close_all_overlays()
 
         except TimeoutException as e:
-            # Use TimeoutException explicitly for better error reporting
             current_url = self.driver.current_url
-            logger.error(f"Timeout waiting for successful login. Current URL: {current_url}. Exception: {e}")
-            raise AssertionError(f"Timeout waiting for login success. Current URL: {current_url}. Error: {e}")
+            logger.error(f"❌ Timeout during login verification. URL: {current_url}")
+            raise AssertionError(f"Login failed. Current URL: {current_url}. Error: {e}")
         except Exception as e:
-            logger.error(f"Login verification failed. Current URL: {self.driver.current_url}. Error: {e}")
+            logger.error(f"❌ Login verification failed: {e}")
             raise
