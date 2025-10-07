@@ -53,6 +53,12 @@ test: ## Run tests in Docker
 	@echo "$(BLUE)🚀 Running tests inside container...$(NC)"
 	@docker compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) up --build
 
+test-report:
+	@echo "$(BLUE)🚀 Running tests, Starting Allure...$(NC)"
+	@make clean-all
+	@make test
+	@make allure-start
+
 # === debugging ===
 shell: ## enter the container
 	@echo "$(YELLOW)🐚 Enter the container...$(NC)"
