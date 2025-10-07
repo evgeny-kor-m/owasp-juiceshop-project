@@ -101,7 +101,7 @@ allure-restart:
 allure-report: ## generate an Allure report from results and open it.
 	@echo "$(YELLOW)📈 Generating and opening Allure report...$(NC)"
 	@docker compose -f $(ALLURE_COMPOSE) exec -T allure-server sh -c "allure generate --clean allure-results -o allure-report"
-	@open http://localhost:$(ALLURE_PORT:-5050)/projects/default/reports/latest
+	@xdg-open http://localhost:$(ALLURE_PORT:-5050)/projects/default/reports/latest
 
 # Allure server logs
 allure-logs:
