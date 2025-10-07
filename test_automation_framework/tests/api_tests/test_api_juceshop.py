@@ -3,54 +3,54 @@ from test_automation_framework.api.api_service import AuthAPI, BasketAPI, genera
 
 def test_full_e2e_flow_with_api(api_base_url, api_session):
     """
-    Тестирование полного End-to-End потока с использованием API.
+    Testing the full End-to-End flow using the API.
     """
 
-    print("\n--- Запуск E2E-теста для OWASP Juice Shop (с API) ---")
+    print("\n--- Starting E2E Test for OWASP Juice Shop (with API) ---")
 
-    # Шаг 1: Регистрация нового пользователя
-    print("1. Регистрация нового пользователя...")
+    # Step 1: Register a new user
+    print("1. Registering a new user...")
     auth_api = AuthAPI(api_session, api_base_url)
     new_email = generate_random_email()
     password = "MyStrongPassword123"
     register_response = auth_api.register_new_user(new_email, password)
-    assert register_response.status_code == 201, f"Регистрация не удалась: {register_response.status_code}"
-    print(f"    Пользователь {new_email} успешно зарегистрирован.")
+    assert register_response.status_code == 201, f"Registration failed: {register_response.status_code}"
+    print(f"    User {new_email} successfully registered.")
 
-    # Шаг 2: Вход в систему
-    print("2. Вход в систему...")
+    # Step 2: Log in to the system
+    print("2. Logging in to the system...")
     login_response = auth_api.login_with_creds(new_email, password)
-    assert login_response.status_code == 200, f"Вход не удался: {login_response.status_code}"
+    assert login_response.status_code == 200, f"Login failed: {login_response.status_code}"
     basket_id = login_response.json().get("authentication", {}).get("bid")
-    assert basket_id is not None, "ID корзины не получен после входа."
-    print(f"    Успешный вход в систему. ID корзины получен - {basket_id}")
+    assert basket_id is not None, "Basket ID was not received after login."
+    print(f"    Successful login. Basket ID received - {basket_id}")
     auth_token = login_response.json().get("authentication", {}).get("token")
-    assert auth_token is not None, "Токен аутентификации не получен после входа."
+    assert auth_token is not None, "Authentication token was not received after login."
     api_session.headers.update({"Authorization": f"Bearer {auth_token}"})
-    print("    Токен аутентификации добавлен в заголовки сессии.")
+    print("    Authentication token added to session headers.")
 
-    # Создание объекта корзины после входа
+    # Create the basket object after login
     basket_api = BasketAPI(api_session, api_base_url, basket_id)
 
-    # Шаг 3: Добавление товара в корзину
-    print("3. Добавление товара в корзину...")
+    # Step 3: Add a product to the basket
+    print("3. Adding a product to the basket...")
     product_id = 1
     add_item_response = basket_api.add_item_to_basket(product_id)
-    assert add_item_response.status_code == 200, f"Не удалось добавить товар в корзину: {add_item_response.status_code}"
-    print(f"    Товар (ID: {product_id}) успешно добавлен в корзину.")
+    assert add_item_response.status_code == 200, f"Failed to add product to basket: {add_item_response.status_code}"
+    print(f"    Product (ID: {product_id}) successfully added to the basket.")
 
-    # Шаг 4: Проверка, что товар в корзине
-    print("4. Проверка содержимого корзины...")
+    # Step 4: Verify the product is in the basket
+    print("4. Checking basket contents...")
     basket_response = basket_api.get_basket_content()
-    assert basket_response.status_code == 200, f"Не удалось получить содержимое корзины: {basket_response.status_code}"
+    assert basket_response.status_code == 200, f"Failed to retrieve basket contents: {basket_response.status_code}"
     basket_items = basket_response.json().get("data", {}).get("Products", [])
-    assert len(basket_items) > 0, "Корзина пуста."
-    assert basket_items[0].get("id") == product_id, "В корзине неверный товар."
-    print("    Товар успешно найден в корзине.")
+    assert len(basket_items) > 0, "Basket is empty."
+    assert basket_items[0].get("id") == product_id, "Incorrect product in the basket."
+    print("    Product successfully found in the basket.")
 
-    # Шаг 5: Оформление заказа
-    print("5. Оформление заказа...")
+    # Step 5: Complete the order
+    print("5. Completing the order...")
     checkout_response = basket_api.checkout()
-    assert checkout_response.status_code == 200, f"Не удалось оформить заказ: {checkout_response.status_code}"
-    print("    Заказ успешно оформлен!")
-    print("\n--- End-to-End тест успешно завершен ---")
+    assert checkout_response.status_code == 200, f"Failed to complete the order: {checkout_response.status_code}"
+    print("    Order successfully completed!")
+    print("\n--- End-to-End test successfully finished ---")

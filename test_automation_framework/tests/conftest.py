@@ -30,36 +30,36 @@ API_BASE_URL  = "API_BASE_URL"
 @pytest.fixture(scope="session")
 def api_base_url():
     """
-    Получает базовый URL приложения из переменной окружения.
-    Если переменная не установлена, выдает ошибку, чтобы избежать
-    запуска тестов без цели.
+    Retrieves the base URL of the application from an environment variable.
+    If the variable is not set, it raises an error to prevent
+    running tests without a target.
     """
     url = os.getenv(API_BASE_URL)
     if not url:
-        raise ValueError(f"Не установлена переменная окружения {API_BASE_URL}. "
-                         "Укажите URL-адрес приложения Juice Shop, например: "
+        raise ValueError(f"Environment variable {API_BASE_URL} is not set. "
+                         "Please specify the URL of the Juice Shop application, for example: "
                          "http://host.docker.internal:8080")
     return url
 
 @pytest.fixture(scope="session")
 def web_base_url():
     """
-    Получает базовый URL приложения из переменной окружения.
-    Если переменная не установлена, выдает ошибку, чтобы избежать
-    запуска тестов без цели.
+    Retrieves the base URL of the application from an environment variable.
+    If the variable is not set, it raises an error to prevent
+    running tests without a target.
     """
     url = os.getenv(WEB_BASE_URL)
     if not url:
-        raise ValueError(f"Не установлена переменная окружения {WEB_BASE_URL}. "
-                         "Укажите URL-адрес приложения Juice Shop, например: "
+        raise ValueError(f"Environment variable {WEB_BASE_URL} is not set. "
+                         "Please specify the URL of the Juice Shop application, for example: "
                          "http://host.docker.internal:8080")
     return url
 
 @pytest.fixture(scope="session")
 def api_session():
     """
-    Фикстура для создания сессии requests.Session.
-    Помогает сохранять cookies и заголовки между запросами.
+    Fixture for creating a requests.Session session.
+    Helps preserve cookies and headers between requests.
     """
     session = requests.Session()
     session.headers.update({'Host': 'juice-shop.local'})
@@ -69,7 +69,7 @@ def api_session():
 @pytest.fixture(scope="function")
 def setup_teardown_driver(request):
     """
-    Фикстура для инициализации и закрытия драйвера, используя класс-обертку.
+    Fixture for initializing and closing the driver using the wrapper class.
     """
     web_wrapper = SeleniumWrapper()
     driver = web_wrapper.get_driver()

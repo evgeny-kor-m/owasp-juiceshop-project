@@ -1,3 +1,5 @@
+# test_automation_framework/tests/ui_tests/test_shopping_cart.py
+
 import logging
 import pytest
 from selenium.webdriver.common.by import By
@@ -8,70 +10,71 @@ from test_automation_framework.pages.login_page import LoginPage
 logger = logging.getLogger(__name__)
 
 class TestShoppingCart:
-    """Тесты для работы с корзиной покупок"""
+    """Tests for shopping cart functionality"""
 
     def test_add_product_to_basket(self, setup_teardown_driver,web_base_url):
-        """Тест: Добавление товара в корзину"""
+        """Test: Adding a product to the basket"""
 
         driver = setup_teardown_driver
         logger.info(f"Create an instance of Page Object")
         login_page = LoginPage(driver,web_base_url)
 
-        # Выполняем действия, используя методы Page Object
+        # Perform actions using Page Object methods
         login_page.open()
         login_page.enter_credentials("admin@juice-sh.op", "admin123")
         login_page.click_login()
         login_page.verify_login_successful()
 
-        # В начале теста после логина
+        # At the start of the test after login
         driver.save_screenshot("/app/screenshots/after_login.png")
         print(f"Overlays on page: {len(driver.find_elements(By.CSS_SELECTOR, '.cdk-overlay-backdrop'))}")
 
-        # После логина добавьте:
+        # Add after login:
         print("=" * 80)
-        print("PAGE SOURCE (первые 1000 символов):")
+        print("PAGE SOURCE (first 1000 characters):")
         print(driver.page_source[:1000])
         print("=" * 80)
 
-        # Проверка overlay
+        # Overlay check
         overlays = driver.find_elements(By.CSS_SELECTOR, '.cdk-overlay-backdrop')
         print(f"Found {len(overlays)} overlays")
         for overlay in overlays:
             print(f"  - Displayed: {overlay.is_displayed()}")
             print(f"  - Classes: {overlay.get_attribute('class')}")
 
-# Шаг 1: Создание объекта страницы товаров
+        # Step 1: Create the products page object
         products_page = ProductsPage(driver)
 
-        # Проверяем, что страница загружена
-        assert products_page.is_products_page_loaded(), "Страница товаров не загрузилась"
+        # Verify that the page is loaded
+        assert products_page.is_products_page_loaded(), "Products page did not load"
 
-        # Шаг 2: Добавление товара в корзину
+        # Step 2: Add product to basket
         initial_count = products_page.get_basket_items_count()
         product_name = products_page.add_product_to_basket_by_index(0)
 
-        # Проверяем увеличение счетчика корзины
+        # Verify the basket counter increased
         new_count = products_page.get_basket_items_count()
-        assert new_count == initial_count + 1, "Счетчик корзины не увеличился"
+        assert new_count == initial_count + 1, "Basket counter did not increase"
 
-        # Шаг 3: Переход в корзину
+        # Step 3: Go to the basket
         products_page.go_to_basket()
 
-        # Создание объекта страницы корзины
+        # Create the basket page object
         basket_page = BasketPage(driver)
-        assert basket_page.is_basket_page_loaded(), "Страница корзины не загрузилась"
+        # Verify that the page is loaded
+        assert basket_page.is_basket_page_loaded(), "Basket page did not load"
 
-        # Шаг 4: Проверка, что товар в корзине
+        # Step 4: Verify the product is in the basket
         assert basket_page.is_product_in_basket(product_name), \
-            f"Товар '{product_name}' не найден в корзине"
+            f"Product '{product_name}' not found in the basket"
 
     def test_add_multiple_products_to_basket(self, setup_teardown_driver,web_base_url):
-        """Тест: Добавление нескольких товаров в корзину"""
+        """Test: Adding multiple products to the basket"""
         driver = setup_teardown_driver
         logger.info(f"Create an instance of Page Object")
         login_page = LoginPage(driver,web_base_url)
 
-        # Выполняем действия, используя методы Page Object
+        # Perform actions using Page Object methods
         login_page.open()
         login_page.enter_credentials("admin@juice-sh.op", "admin123")
         login_page.click_login()
@@ -79,56 +82,56 @@ class TestShoppingCart:
 
         products_page = ProductsPage(driver)
 
-        # Добавляем 3 разных товара
+        # Add 3 different products
         added_products = []
         for i in range(3):
             product_name = products_page.add_product_to_basket_by_index(i)
             added_products.append(product_name)
 
-        # Проверяем счетчик
+        # Check the counter
         basket_count = products_page.get_basket_items_count()
-        assert basket_count >= 3, f"Ожидалось минимум 3 товара, получено {basket_count}"
+        assert basket_count >= 3, f"Expected minimum 3 products, got {basket_count}"
 
-        # Переходим в корзину
+        # Go to the basket
         products_page.go_to_basket()
 
         basket_page = BasketPage(driver)
 
-        # Проверяем наличие всех товаров
+        # Verify the presence of all products
         for product in added_products:
             assert basket_page.is_product_in_basket(product), \
-                f"Товар '{product}' не найден в корзине"
+                f"Product '{product}' not found in the basket"
 
     def test_full_checkout_flow(self, setup_teardown_driver,web_base_url):
-        """Тест: Полный процесс оформления заказа"""
+        """Test: Full checkout process"""
         driver = setup_teardown_driver
         logger.info(f"Create an instance of Page Object")
         login_page = LoginPage(driver,web_base_url)
 
-        # Выполняем действия, используя методы Page Object
+        # Perform actions using Page Object methods
         login_page.open()
         login_page.enter_credentials("admin@juice-sh.op", "admin123")
         login_page.click_login()
         login_page.verify_login_successful()
 
-        # 1. Добавляем товар
+        # 1. Add a product
         products_page = ProductsPage(driver)
         product_name = products_page.add_product_to_basket_by_index(0)
 
-        # 2. Идем в корзину
+        # 2. Go to the basket
         products_page.go_to_basket()
 
         basket_page = BasketPage(driver)
-        assert basket_page.is_basket_page_loaded(), "Корзина не загрузилась"
+        assert basket_page.is_basket_page_loaded(), "Basket page did not load"
 
-        # 3. Проверяем товар
-        assert basket_page.is_product_in_basket(product_name), "Товар не в корзине"
+        # 3. Verify the product
+        assert basket_page.is_product_in_basket(product_name), "Product not in the basket"
 
-        # 4. Оформляем заказ
+        # 4. Proceed to checkout
         basket_page.proceed_to_checkout()
 
-        # Здесь нужно добавить дополнительные шаги для checkout
-        # в зависимости от того, что требует Juice Shop
+        # Additional steps for checkout are needed here
+        # depending on what Juice Shop requires
 
 
 if __name__ == "__main__":
