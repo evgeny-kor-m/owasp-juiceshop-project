@@ -29,18 +29,18 @@ class TestShoppingCart:
         driver.save_screenshot("/app/screenshots/after_login.png")
         print(f"Overlays on page: {len(driver.find_elements(By.CSS_SELECTOR, '.cdk-overlay-backdrop'))}")
 
-        # Add after login:
-        print("=" * 80)
-        print("PAGE SOURCE (first 1000 characters):")
-        print(driver.page_source[:1000])
-        print("=" * 80)
-
-        # Overlay check
-        overlays = driver.find_elements(By.CSS_SELECTOR, '.cdk-overlay-backdrop')
-        print(f"Found {len(overlays)} overlays")
-        for overlay in overlays:
-            print(f"  - Displayed: {overlay.is_displayed()}")
-            print(f"  - Classes: {overlay.get_attribute('class')}")
+        # # Add after login:
+        # print("=" * 80)
+        # print("PAGE SOURCE (first 1000 characters):")
+        # print(driver.page_source[:1000])
+        # print("=" * 80)
+        #
+        # # Overlay check
+        # overlays = driver.find_elements(By.CSS_SELECTOR, '.cdk-overlay-backdrop')
+        # print(f"Found {len(overlays)} overlays")
+        # for overlay in overlays:
+        #     print(f"  - Displayed: {overlay.is_displayed()}")
+        #     print(f"  - Classes: {overlay.get_attribute('class')}")
 
         # Step 1: Create the products page object
         products_page = ProductsPage(driver)

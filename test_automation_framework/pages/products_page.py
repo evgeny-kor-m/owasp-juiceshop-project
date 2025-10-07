@@ -4,6 +4,7 @@
 import logging
 import time
 from selenium.webdriver.common.by import By
+
 from .base_page import BasePage
 
 logger = logging.getLogger(__name__)
@@ -17,6 +18,8 @@ class ProductsPage(BasePage):
     ADD_TO_BASKET_BUTTONS = (By.CSS_SELECTOR, "button.btn-basket")
     BASKET_BUTTON = (By.CSS_SELECTOR, "button[aria-label='Show the shopping cart']")
     BASKET_COUNTER = (By.CSS_SELECTOR, "span.fa-layers-counter")
+    BASKET_COUNT_LOCATOR = (By.CSS_SELECTOR, 'button[aria-label="Show products in cart"] span.mat-badge-content')
+
     PRODUCT_NAME = (By.CSS_SELECTOR, "div.item-name")
 
     def __init__(self, driver):
@@ -61,6 +64,7 @@ class ProductsPage(BasePage):
 
         self.close_all_overlays()
 
+
         try:
             button.click()
             logger.info(f"✅ Product '{product_name}' added to basket.")
@@ -69,7 +73,11 @@ class ProductsPage(BasePage):
             self.driver.execute_script("arguments[0].click();", button)
             logger.info(f"✅ Product '{product_name}' added via JavaScript.")
 
-        time.sleep(0.5)
+        time.sleep(1)
+
+
+
+        logger.info("Basket counter updated successfully.")
         return product_name
 
     def add_product_by_name(self, product_name: str):
