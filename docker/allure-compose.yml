@@ -3,7 +3,6 @@
 services:
   allure-server:
     image: ${ALLURE_IMAGE:-frankescobar/allure-docker-service}
-    user: "${UID}:${GID}"
     container_name: allure-server-${ENVIRONMENT:-local}
     volumes:
       - ${ALLURE_RESULTS_PATH:-../allure-results}:/app/allure-results:rw
