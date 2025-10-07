@@ -74,9 +74,9 @@ def setup_teardown_driver(request):
     web_wrapper = SeleniumWrapper()
     driver = web_wrapper.get_driver()
 
-    # Clean before test
-    driver.execute_script("window.localStorage.clear(); window.sessionStorage.clear();")
-    logger.info("🧹 Cleared browser localStorage and sessionStorage for a fresh start.")
+    # # Clean before test
+    # driver.execute_script("window.localStorage.clear(); window.sessionStorage.clear();")
+    # logger.info("🧹 Cleared browser localStorage and sessionStorage for a fresh start.")
 
     yield driver
 
