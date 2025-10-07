@@ -6,7 +6,7 @@ from test_automation_framework.web_utils.selenium_wrapper import SeleniumWrapper
 
 # Logging Settings (performed once for the entire test launch)
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.FileHandler('logs/test_log.log'),
