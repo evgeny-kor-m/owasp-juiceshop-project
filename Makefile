@@ -99,9 +99,12 @@ allure-restart:
 	docker compose -f $(ALLURE_COMPOSE) restart
 
 allure-report: ## generate an Allure report from results and open it.
-	@echo "$(YELLOW)📈 Generating and opening Allure report...$(NC)"
-	@docker compose -f $(ALLURE_COMPOSE) exec -T allure-server sh -c "allure generate --clean allure-results -o allure-report"
-	@open allure-report/index.html
+#	@echo "$(YELLOW)📈 Generating and opening Allure report...$(NC)"
+#	@docker compose -f $(ALLURE_COMPOSE) exec -T allure-server sh -c "allure generate --clean allure-results -o allure-report"
+#	@open http://localhost:5050/projects/default/reports/latest
+	docker compose -f $(ALLURE_COMPOSE) exec allure-server sh -c \
+    		"allure generate --clean allure-results -o allure-report && \
+    		allure open allure-report"
 
 # Allure server logs
 allure-logs:
