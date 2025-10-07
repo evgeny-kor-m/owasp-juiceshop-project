@@ -1,18 +1,26 @@
+# test_automation_framework/tests/conftest.py
 import pytest
 import os
 import requests
 import logging
 from test_automation_framework.web_utils.selenium_wrapper import SeleniumWrapper
 
-# Logging Settings (performed once for the entire test launch)
+# Read LOG_LEVEL from .env (default to INFO if not defined)
+log_level_str = os.getenv("LOG_LEVEL", "INFO").strip().upper()
+
+# Convert the string to an actual logging level constant (default to INFO if invalid)
+log_level = getattr(logging, log_level_str, logging.INFO)
+
+# Configure the global logging settings
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=log_level,
+    format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
     handlers=[
-        logging.FileHandler('logs/test_log.log'),
-        logging.StreamHandler()
+        logging.StreamHandler(),                      # Output to console
+        logging.FileHandler("logs/test_run.log")      # Output to file
     ]
 )
+
 logger = logging.getLogger(__name__)
 
 #JUICESHOP_BASE_URL = "JUICESHOP_BASE_URL"
