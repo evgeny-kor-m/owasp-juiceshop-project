@@ -37,7 +37,7 @@ services:
     volumes:
       # Монтируем локальный каталог с отчетами внутрь контейнера
       - ${ALLURE_REPORT_PATH:-./allure-report}:/usr/share/nginx/html/allure:ro
-      - ${HTML_REPORT_PATH:-../reports}:/usr/share/nginx/html/reports
+      - ${HTML_REPORT_PATH:-../reports}:/usr/share/nginx/html/reports:ro
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     networks:
       - default
