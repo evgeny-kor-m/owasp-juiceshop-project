@@ -92,25 +92,25 @@ allure-restart:
 	@echo "🔄 Restart Allure server......"
 	docker compose -f $(ALLURE_COMPOSE) restart
 
-#allure-start:
-#	@echo "🚀 Starting Allure server..."
-#	docker compose -f $(ALLURE_COMPOSE) --env-file $(ENV_FILE) up -d
-#	@echo "✅ Allure available: http://localhost:5050/allure/"
-#	@echo "✅ HTTP available: http://localhost:5050/reports/"
-#allure-report: ## generate an Allure report from results and open it.
-#	@echo "$(YELLOW)📈 Generating and opening Allure report...$(NC)"
-#	@docker compose -f $(ALLURE_COMPOSE) exec -T allure-server sh -c "allure generate --clean allure-results -o allure-report"
+allure-start:
+	@echo "🚀 Starting Allure server..."
+	docker compose -f $(ALLURE_COMPOSE) --env-file $(ENV_FILE) up -d
+	@echo "✅ Allure available: http://localhost:5050/allure/"
+	@echo "✅ HTTP available: http://localhost:5050/reports/"
+allure-report: ## generate an Allure report from results and open it.
+	@echo "$(YELLOW)📈 Generating and opening Allure report...$(NC)"
+	@docker compose -f $(ALLURE_COMPOSE) exec -T allure-server sh -c "allure generate --clean allure-results -o allure-report"
 
 
-allure-start: ## Starts only Nginx web server to view the report.
-	@echo "🚀 Starting Allure web-server (Nginx) to view reports..."
-	@docker compose -f $(ALLURE_COMPOSE) --env-file $(ENV_FILE) up -d web-server
-	@echo "✅ Allure report available: http://localhost:5050/allure/"
-	@echo "✅ HTTP report available: http://localhost:5050/reports/"
-allure-report: ## generate a new Allure report using the test-runner container, which contain Allure CLI.
-	@echo "$(YELLOW)📈 Running Allure report generation inside test-runner...$(NC)"
-	@docker compose -f $(MAIN_COMPOSE) exec -T $(CONTAINER_NAME) sh -c "allure generate --clean /app/allure-results -o /app/allure-reports"
-	@echo "$(GREEN)✅ Allure report generated in: allure-reports/$(NC)"
+#allure-start: ## Starts only Nginx web server to view the report.
+#	@echo "🚀 Starting Allure web-server (Nginx) to view reports..."
+#	@docker compose -f $(ALLURE_COMPOSE) --env-file $(ENV_FILE) up -d web-server
+#	@echo "✅ Allure report available: http://localhost:5050/allure/"
+#	@echo "✅ HTTP report available: http://localhost:5050/reports/"
+#allure-report: ## generate a new Allure report using the test-runner container, which contain Allure CLI.
+#	@echo "$(YELLOW)📈 Running Allure report generation inside test-runner...$(NC)"
+#	@docker compose -f $(MAIN_COMPOSE) exec -T $(CONTAINER_NAME) sh -c "allure generate --clean /app/allure-results -o /app/allure-reports"
+#	@echo "$(GREEN)✅ Allure report generated in: allure-reports/$(NC)"
 
 # Allure server logs
 allure-logs:
