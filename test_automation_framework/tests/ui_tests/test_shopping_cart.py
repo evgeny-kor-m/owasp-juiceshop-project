@@ -1,5 +1,7 @@
 import logging
 import pytest
+from selenium.webdriver.common.by import By
+
 from test_automation_framework.pages.products_page import ProductsPage
 from test_automation_framework.pages.basket_page import BasketPage
 from test_automation_framework.pages.login_page import LoginPage
@@ -21,6 +23,9 @@ class TestShoppingCart:
         login_page.enter_credentials("admin@juice-sh.op", "admin123")
         login_page.click_login()
         login_page.verify_login_successful()
+        # В начале теста после логина
+        driver.save_screenshot('after_login.png')
+        print(f"Overlays on page: {len(driver.find_elements(By.CSS_SELECTOR, '.cdk-overlay-backdrop'))}")
 
 # Шаг 1: Создание объекта страницы товаров
         products_page = ProductsPage(driver)
