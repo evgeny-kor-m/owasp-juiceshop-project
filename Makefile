@@ -109,7 +109,7 @@ allure-start: ## Starts only Nginx web server to view the report.
 	@echo "✅ HTTP report available: http://localhost:5050/reports/"
 allure-report: ## generate a new Allure report using the test-runner container, which contain Allure CLI.
 	@echo "$(YELLOW)📈 Running Allure report generation inside test-runner...$(NC)"
-	@docker compose -f $(MAIN_COMPOSE) exec -T $(CONTAINER_NAME)-$(ENVIRONMENT) sh -c "allure generate --clean /app/allure-results -o /app/allure-reports"
+	@docker compose -f $(MAIN_COMPOSE) exec -T $(CONTAINER_NAME) sh -c "allure generate --clean /app/allure-results -o /app/allure-reports"
 	@echo "$(GREEN)✅ Allure report generated in: allure-reports/$(NC)"
 
 # Allure server logs
