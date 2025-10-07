@@ -65,7 +65,7 @@ logs: ## Show Log
 status: ## show the status of services.
 	@echo "$(YELLOW)📊 Status of services:$(NC)"
 	@docker compose -f $(MAIN_COMPOSE) ps 2>/dev/null || true
-	@docker compose -f $(ALLURE_COMPOSE) ps 2>/dev/null || true
+#	@docker compose -f $(ALLURE_COMPOSE) ps 2>/dev/null || true
 
 # === management ===
 
@@ -100,7 +100,7 @@ allure-restart:
 
 allure-report: ## generate an Allure report from results and open it.
 	@echo "$(YELLOW)📈 Generating and opening Allure report...$(NC)"
-	@docker compose -f $(ALLURE_COMPOSE) exec -T allure sh -c "allure generate --clean allure-results -o allure-report"
+	@docker compose -f $(ALLURE_COMPOSE) exec -T allure-server sh -c "allure generate --clean allure-results -o allure-report"
 	@open allure-report/index.html
 
 # Allure server logs

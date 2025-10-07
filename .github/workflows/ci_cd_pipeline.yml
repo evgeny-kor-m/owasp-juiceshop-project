@@ -66,6 +66,12 @@ jobs:
           name: pytest-html-report
           path: html-reports/report.html # Path is now correct relative to the root
 
+      - name: Upload Pytest Logs # Upload the Pytest Logs as artifacts.
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-logs-report
+          path: logs/test_run.log # Path is now correct relative to the root
+
       - name: Upload Coverage HTML Report # Upload the coverage HTML report as an artifact.
         uses: actions/upload-artifact@v4
         with:
