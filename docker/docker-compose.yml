@@ -7,6 +7,7 @@ services:
       dockerfile: ./docker/Dockerfile
     image: ${TEST_RUNNER_IMAGE:-test-runner:latest}
     container_name: test-runner-${ENVIRONMENT:-local}
+    user: "${UID:-$(id -u)}:${GID:-$(id -g)}"
     ports:
       - "${TEST_RUNNER_PORT:-4040}:4040"
     deploy:
@@ -51,8 +52,12 @@ services:
 #      && allure generate --clean /app/allure-results -o /app/allure-reports
 #      "
 #    command: /bin/bash -c "pytest --html=/app/html-reports/report.html --self-contained-html --alluredir=/app/allure-results && allure generate --clean /app/allure-results -o /app/allure-reports"
-#  The ; (semicolon) operator is a sequential execution operator. It will always execute the second command (allure generate), regardless of how the first command (pytest) completed.
+#    The ; (semicolon) operator is a sequential execution operator. It will always execute the second command (allure generate), regardless of how the first command (pytest) completed.
     command: /bin/bash -c "pytest --html=/app/html-reports/report.html --self-contained-html --alluredir=/app/allure-results ; allure generate --clean /app/allure-results -o /app/allure-reports"
+#    command: /bin/bash -c "set -x ; pytest --html=/app/html-reports/report.html --self-contained-html --alluredir=/app/allure-results ; echo '--- Содержимое allure-results: ---' ; ls -la /app/allure-results ; allure generate --clean /app/allure-results -o /app/allure-reports ; echo '--- Содержимое allure-reports: ---' ; ls -la /app/allure-reports"
+
+
+
     restart: no
 
     # Здоровье контейнера
