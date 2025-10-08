@@ -6,7 +6,7 @@ services:
     container_name: allure-server-${ENVIRONMENT:-local}
     volumes:
       - ${ALLURE_RESULTS_PATH:-../allure-results}:/app/allure-results:rw
-      - ${ALLURE_REPORT_PATH:-../allure-reports}:/app/allure-report:rw
+      - ${ALLURE_REPORT_PATH:-../allure-reports}:/app/allure-reports:rw
     environment:
       CHECK_RESULTS_EVERY_SECONDS: ${ALLURE_CHECK_INTERVAL:-10}
       KEEP_HISTORY: ${ALLURE_KEEP_HISTORY:-1}
@@ -36,7 +36,7 @@ services:
       - "${ALLURE_PORT:-5050}:80"
     volumes:
       # Монтируем локальный каталог с отчетами внутрь контейнера
-      - ${ALLURE_REPORT_PATH:-./allure-report}:/usr/share/nginx/html/allure:ro
+      - ${ALLURE_REPORT_PATH:-../allure-reports}:/usr/share/nginx/html/allure:ro
       - ${HTML_REPORT_PATH:-../reports}:/usr/share/nginx/html/reports:ro
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     networks:
