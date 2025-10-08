@@ -50,11 +50,7 @@ services:
 #      --alluredir=/app/allure-results \
 #      && allure generate --clean /app/allure-results -o /app/allure-reports
 #      "
-#    command: /bin/bash -c "pytest --html=/app/html-reports/report.html --self-contained-html --alluredir=/app/allure-results && allure generate --clean /app/allure-results -o /app/allure-reports"
-#    The ; (semicolon) operator is a sequential execution operator. It will always execute the second command (allure generate), regardless of how the first command (pytest) completed.
-    command: /bin/bash -c "pytest --html=/app/html-reports/report.html --self-contained-html --alluredir=/app/allure-results ; allure generate --clean /app/allure-results -o /app/allure-reports"
-#    command: /bin/bash -c "set -x ; pytest --html=/app/html-reports/report.html --self-contained-html --alluredir=/app/allure-results ; echo '--- Содержимое allure-results: ---' ; ls -la /app/allure-results ; allure generate --clean /app/allure-results -o /app/allure-reports ; echo '--- Содержимое allure-reports: ---' ; ls -la /app/allure-reports"
-
+    command: /bin/bash -c "pytest --html=/app/html-reports/report.html --self-contained-html --alluredir=/app/allure-results && allure generate --clean /app/allure-results -o /app/allure-reports"
 
 
     restart: no
