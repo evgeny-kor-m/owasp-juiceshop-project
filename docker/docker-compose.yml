@@ -7,7 +7,6 @@ services:
       dockerfile: ./docker/Dockerfile
     image: ${TEST_RUNNER_IMAGE:-test-runner:latest}
     container_name: test-runner-${ENVIRONMENT:-local}
-    user: "${UID:-$(id -u)}:${GID:-$(id -g)}"
     ports:
       - "${TEST_RUNNER_PORT:-4040}:4040"
     deploy:
