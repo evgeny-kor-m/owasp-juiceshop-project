@@ -60,9 +60,28 @@ test-report: ## Run tests and reports
 	@make allure-start
 
 # === K3D commands ===
+k3d-setup: ## Configure k3d cluster
+	@echo "$(YELLOW)☸️ Settings k3d cluster...$(NC)"
+	@if ! k3d cluster list | grep -q $(K3D_CLUSTER); then \
+		echo "$(BLUE)Creating k3d cluster $(K3D_CLUSTER)...$(NC)"; \
+		k3d cluster create $(K3D_CLUSTER) \
+        --servers 1 \
+        --agents 1 \
+        --port "8080:80@loadbalancer" \
+        --port "8443:443@loadbalancer" \
+        --port "2222:32222@loadbalancer" \
+        --api-port 6443 \
+        --k3s-arg "--disable=traefik@server:0" \
+        --volume /mnt/e/Git_Projects/VirtualEnv/DockerData/k3d-shared:/data-host@all \
+        --network host-network \
+        --verbose \
+        --wait; \
+	else \
+		echo "$(GREEN)Cluster $(K3D_CLUSTER) already created$(NC)"; \
+	fi
+	@echo "$(GREEN)✅ Cluster ready!$(NC)"
 
-
-k3d-status: ## Check the K3d Cluster Status. Shows a list of K3D clusters and Kubernetes nodes.
+k3d-status: ## Show K3D cluster status and Kubernetes nodes
 	@echo "$(YELLOW)📊 Status k3d cluster:$(NC)"
 	k3d cluster list
 	@echo "$(YELLOW)📊 Clusters Nodes:$(NC)"
