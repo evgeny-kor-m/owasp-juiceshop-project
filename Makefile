@@ -102,6 +102,8 @@ k3d-clean: ## Delete K3D cluster completely
 # ⚙️ APPLICATION MANAGEMENT
 # ========================================================
 app-install: ## Deploy test application (OWASP Juice Shop)
+	echo  -e "${GREEN}Installing Ingress Nginx Controller${NC}"
+	kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
 	echo -e "${GREEN}Installing ${BLUE}OWASP Juice Shop ${GREEN}application...${NC}"
 	kubectl apply -f owasp-juiceshop/juice-shop-deployment.yaml
 
