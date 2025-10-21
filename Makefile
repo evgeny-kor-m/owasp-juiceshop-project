@@ -63,7 +63,7 @@ test-report: ## Run tests and reports
 k3d-setup: ## configure k3d cluster
 	@echo "$(YELLOW)☸️ Settings k3d cluster...$(NC)"
 	@if ! k3d cluster list | grep -q $(K3D_CLUSTER); then \
-		echo "$(BLUE)Creating k3d cluster $(K3D_CLUSTER)...$(NC)"; \
+  		echo "$(BLUE)Creating k3d cluster $(K3D_CLUSTER)...$(NC)"; \
 		k3d cluster create $(K3D_CLUSTER) \
         --servers 1 \
         --agents 1 \
