@@ -59,7 +59,18 @@ test-report: ## Run tests and reports
 	@make test
 	@make allure-start
 
+# === K3D commands ===
 
+
+k3d-status: ## Check the K3d Cluster Status. Shows a list of K3D clusters and Kubernetes nodes.
+	@echo "$(YELLOW)📊 Status k3d cluster:$(NC)"
+	k3d cluster list
+	@echo "$(YELLOW)📊 Clusters Nodes:$(NC)"
+	kubectl get nodes
+
+k3d-clean: ## Delete K3d Cluster
+	@echo "$(YELLOW)🗑️ Remove k3d cluster...$(NC)"
+	k3d cluster delete $(K3D_CLUSTER)
 
 # === Application ===
 app-install: ## Application install
