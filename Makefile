@@ -33,7 +33,8 @@ endef
 help: ## show the certificate. Disputes a list of all available commands with their descriptions
 	@echo "$(YELLOW)🚀 UI Testing with k3d support $(NC)"
 	@echo "$(BLUE)Available commands:$(NC)"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-20s$(NC) %s\n", $$1, $$2}'
+#	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-20s$(NC) %s\n", $$1, $$2}'
+	@grep make -pr | awk -F: '/^[a-zA-Z0-9_-]+:([^=]|$)/ {print $1}' | sort
 
 # === Basic teams ===
 build: ## Collect Docker image. For everyday development, to use the Docker cache by default, which will significantly speed up repeated assemblies.
@@ -53,7 +54,7 @@ test: ## Run tests in Docker
 	@echo "$(BLUE)🚀 Running tests inside container...$(NC)"
 	@docker compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) up --build
 
-test-report:
+test-report: ## Run tests and reports
 	@echo "$(BLUE)🚀 Running tests, Starting Allure...$(NC)"
 	@make clean-all
 	@make test
@@ -92,7 +93,7 @@ k3d-clean: ## Delete K3d Cluster
 	k3d cluster delete $(K3D_CLUSTER)
 
 # === Application ===
-app-install: ##
+app-install: ## Application install
 	echo -e "${GREEN}Installing ${BLUE}OWASP Juice Shop ${GREEN}application...${NC}"
 	kubectl  apply -f owasp-juiceshop/juice-shop-deployment.yaml
 
@@ -120,22 +121,22 @@ clean-all: ## complete cleaning (including images). Recommendation: Use carefull
 	docker system prune -f
 	@make clean
 
-clean: ##
+clean: ## cleaning
 	@echo "$(YELLOW)🧹 Cleanup...$(NC)"
 	sudo rm -rf html-reports/* screenshots/* allure-results/* allure-reports/* logs/*
 	sudo find . -type d -name "__pycache__" -prune -exec rm -rf {} +
 	find . -name "*.pyc" -delete
 
 # === Allure server management ===
-allure-stop:
+allure-stop: ## allure
 	@echo "🛑 Stopping Allure server..."
 	docker compose -f $(ALLURE_COMPOSE) down
 
-allure-restart:
+allure-restart: ## allure
 	@echo "🔄 Restart Allure server......"
 	docker compose -f $(ALLURE_COMPOSE) restart
 
-allure-start:
+allure-start: ## allure
 	@echo "🚀 Starting Allure server..."
 	docker compose -f $(ALLURE_COMPOSE) --env-file $(ENV_FILE) up -d
 	@echo "✅ Allure available: http://localhost:5050/allure/"
@@ -156,5 +157,5 @@ allure-report: ## generate an Allure report from results and open it.
 #	@echo "$(GREEN)✅ Allure report generated in: allure-reports/$(NC)"
 
 # Allure server logs
-allure-logs:
+allure-logs: ## allure
 	docker compose -f $(ALLURE_COMPOSE) logs -f
