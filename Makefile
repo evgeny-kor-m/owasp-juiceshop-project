@@ -94,7 +94,7 @@ k3d-status: ## Show K3D cluster and Kubernetes nodes
 	@echo "$(YELLOW)📊 Kubernetes nodes:$(NC)"
 	kubectl get nodes
 
-k3d-clean: ## Delete K3D cluster completely
+k3d-remove: ## Delete K3D cluster completely
 	@echo "$(YELLOW)🗑️ Removing K3D cluster $(K3D_CLUSTER)...$(NC)"
 	k3d cluster delete $(K3D_CLUSTER)
 
@@ -102,14 +102,14 @@ k3d-clean: ## Delete K3D cluster completely
 # ⚙️ APPLICATION MANAGEMENT
 # ========================================================
 app-install: ## Deploy test application (OWASP Juice Shop)
-	@echo  -e "${GREEN}Installing Ingress Nginx Controller${NC}"
+	@echo "${GREEN}Installing Ingress Nginx Controller${NC}"
 	kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
-	@echo -e "${YELLOW}Waiting for Ingress Nginx Controller to be ready...${NC}"
+	@echo "${YELLOW}Waiting for Ingress Nginx Controller to be ready...${NC}"
 	kubectl wait --namespace ingress-nginx \
 		--for=condition=ready pod \
 		--selector=app.kubernetes.io/component=controller \
 		--timeout=90s
-	@echo -e "${GREEN}Installing ${BLUE}OWASP Juice Shop ${GREEN}application...${NC}"
+	@echo "${GREEN}Installing ${BLUE}OWASP Juice Shop ${GREEN}application...${NC}"
 	kubectl apply -f owasp-juiceshop/juice-shop-deployment.yaml
 
 # ========================================================
