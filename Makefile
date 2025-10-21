@@ -1,4 +1,6 @@
-# MakeFile for UI Support Tests K3D.
+# ========================================================
+# 🚀 MakeFile for UI Support Tests with K3D
+# ========================================================
 
 # Colors for output
 GREEN = \033[0;32m
@@ -7,7 +9,7 @@ YELLOW = \033[1;33m
 BLUE = \033[0;34m
 NC = \033[0m
 
-.PHONY: help build run test clean logs status k3d-setup k3d-import web-reports
+.PHONY: help build run test clean logs status k3d-setup allure-start allure-stop allure-report allure-restart allure-logs
 
 # Docker compose files
 DOCKER_DIR = docker
@@ -29,21 +31,25 @@ define check_env
 	fi
 endef
 
-help: ## Show available commands
+# ========================================================
+# 🧭 HELP
+# ========================================================
+help: ## Show available commands and descriptions
 	@echo "$(BLUE)Available commands:$(NC)"
-	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z0-9_-]+:.*?## ' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 
-
-# === Basic teams ===
-build: ## Collect Docker image. For everyday development, to use the Docker cache by default, which will significantly speed up repeated assemblies.
+# ========================================================
+# 🏗️ BASIC TASKS
+# ========================================================
+build: ## Build Docker image (use cache for speed)
 	@echo "$(YELLOW)🏗️ Building Docker image $(IMAGE_NAME)...$(NC)"
 	docker compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) build
 
-build-nocache: ## Collect Docker image. [-NO-CACHE] makes doCker rebuild all layers, ignoring the cache, which is useful to ensure fresh assembly, but can be slower.
-	@echo "$(YELLOW)🏗️ Building Docker image $(IMAGE_NAME)...$(NC)"
+build-nocache: ## Build Docker image (ignore cache, slower but fresh)
+	@echo "$(YELLOW)🏗️ Building Docker image $(IMAGE_NAME) without cache...$(NC)"
 	docker compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) build --no-cache
 
-run: ## Run the container interactive. Wedding mode (-rm delete the container after completion).
+run: ## Run container interactively (auto remove after exit)
 	@echo "$(YELLOW)🚀 Starting container $(CONTAINER_NAME)...$(NC)"
 	docker compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) run --rm $(CONTAINER_NAME)
 
@@ -52,15 +58,17 @@ test: ## Run tests in Docker
 	@echo "$(BLUE)🚀 Running tests inside container...$(NC)"
 	@docker compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) up --build
 
-test-report: ## Run tests and reports
-	@echo "$(BLUE)🚀 Running tests, Starting Allure...$(NC)"
+test-report: ## Run tests and generate Allure report
+	@echo "$(BLUE)🚀 Running tests and generating Allure report...$(NC)"
 	@make clean-all
 	@make test
 	@make allure-start
 
-# === K3D commands ===
-k3d-setup: ## Configure k3d cluster
-	@echo "$(YELLOW)☸️ Settings k3d cluster...$(NC)"
+# ========================================================
+# ☸️ K3D COMMANDS
+# ========================================================
+k3d-setup: ## Configure and create K3D cluster
+	@echo "$(YELLOW)☸️ Setting up K3D cluster...$(NC)"
 	@if ! k3d cluster list | grep -q $(K3D_CLUSTER); then \
 		echo "$(BLUE)Creating k3d cluster $(K3D_CLUSTER)...$(NC)"; \
 		k3d cluster create $(K3D_CLUSTER) \
@@ -76,84 +84,79 @@ k3d-setup: ## Configure k3d cluster
         --verbose \
         --wait; \
 	else \
-		echo "$(GREEN)Cluster $(K3D_CLUSTER) already created$(NC)"; \
+		echo "$(GREEN)Cluster $(K3D_CLUSTER) already exists$(NC)"; \
 	fi
 	@echo "$(GREEN)✅ Cluster ready!$(NC)"
 
-k3d-status: ## Show K3D cluster status and Kubernetes nodes
-	@echo "$(YELLOW)📊 Status k3d cluster:$(NC)"
+k3d-status: ## Show K3D cluster and Kubernetes nodes
+	@echo "$(YELLOW)📊 K3D cluster status:$(NC)"
 	k3d cluster list
-	@echo "$(YELLOW)📊 Clusters Nodes:$(NC)"
+	@echo "$(YELLOW)📊 Kubernetes nodes:$(NC)"
 	kubectl get nodes
 
-k3d-clean: ## Delete K3d Cluster
-	@echo "$(YELLOW)🗑️ Remove k3d cluster...$(NC)"
+k3d-clean: ## Delete K3D cluster completely
+	@echo "$(YELLOW)🗑️ Removing K3D cluster $(K3D_CLUSTER)...$(NC)"
 	k3d cluster delete $(K3D_CLUSTER)
 
-# === Application ===
-app-install: ## Application install
+# ========================================================
+# ⚙️ APPLICATION MANAGEMENT
+# ========================================================
+app-install: ## Deploy test application (OWASP Juice Shop)
 	echo -e "${GREEN}Installing ${BLUE}OWASP Juice Shop ${GREEN}application...${NC}"
-	kubectl  apply -f owasp-juiceshop/juice-shop-deployment.yaml
+	kubectl apply -f owasp-juiceshop/juice-shop-deployment.yaml
 
-# === debugging ===
-shell: ## enter the container
-	@echo "$(YELLOW)🐚 Enter the container...$(NC)"
+# ========================================================
+# 🧩 DEBUGGING
+# ========================================================
+shell: ## Enter container shell (interactive bash)
+	@echo "$(YELLOW)🐚 Entering container shell...$(NC)"
 	docker compose -f $(MAIN_COMPOSE) run --rm $(CONTAINER_NAME) bash || true
 
-logs: ## Show Log
-	@echo "$(YELLOW)📜 Show container Log:$(NC)"
+logs: ## Show container logs
+	@echo "$(YELLOW)📜 Showing container logs...$(NC)"
 	docker compose -f $(MAIN_COMPOSE) logs -f $(CONTAINER_NAME)
 
-status: ## show the status of services.
-	@echo "$(YELLOW)📊 Status of services:$(NC)"
+status: ## Show running services status
+	@echo "$(YELLOW)📊 Docker services status:$(NC)"
 	@docker compose -f $(MAIN_COMPOSE) ps 2>/dev/null || true
-#	@docker compose -f $(ALLURE_COMPOSE) ps 2>/dev/null || true
 
-# === management ===
-
-clean-all: ## complete cleaning (including images). Recommendation: Use carefully
-## docker compose ... Down --romi all (deleys the images used by services) and Docker System Prune -f (removes unused Docker objects).
-	@echo "$(YELLOW)🧹 Full cleanup (including images)...$(NC)"
+# ========================================================
+# 🧹 CLEANING
+# ========================================================
+clean-all: ## Full cleanup (containers, images, volumes)
+	@echo "$(YELLOW)🧹 Full cleanup including images...$(NC)"
 	docker compose -f $(MAIN_COMPOSE) down --volumes --remove-orphans --rmi all
 	docker compose -f $(ALLURE_COMPOSE) down --volumes --remove-orphans --rmi all
 	docker system prune -f
 	@make clean
 
-clean: ## cleaning
-	@echo "$(YELLOW)🧹 Cleanup...$(NC)"
-	sudo rm -rf html-reports/* screenshots/* allure-results/* allure-reports/* logs/*
-	sudo find . -type d -name "__pycache__" -prune -exec rm -rf {} +
+clean: ## Remove test artifacts and cache
+	@echo "$(YELLOW)🧹 Cleaning project folders...$(NC)"
+	sudo rm -rf html-reports/* screenshots/* allure-results/* allure-reports/* logs/* || true
+	sudo find . -type d -name "__pycache__" -prune -exec rm -rf {} + || true
 	find . -name "*.pyc" -delete
 
-# === Allure server management ===
-allure-stop: ## allure
-	@echo "🛑 Stopping Allure server..."
-	docker compose -f $(ALLURE_COMPOSE) down
-
-allure-restart: ## allure
-	@echo "🔄 Restart Allure server......"
-	docker compose -f $(ALLURE_COMPOSE) restart
-
-allure-start: ## allure
+# ========================================================
+# 📊 ALLURE SERVER MANAGEMENT
+# ========================================================
+allure-start: ## Start Allure report web server
 	@echo "🚀 Starting Allure server..."
 	docker compose -f $(ALLURE_COMPOSE) --env-file $(ENV_FILE) up -d
 	@echo "✅ Allure available: http://localhost:5050/allure/"
 	@echo "✅ HTTP available: http://localhost:5050/reports/"
-allure-report: ## generate an Allure report from results and open it.
-	@echo "$(YELLOW)📈 Generating and opening Allure report...$(NC)"
-	@docker compose -f $(ALLURE_COMPOSE) exec -T allure-server sh -c "allure generate --clean allure-results -o allure-report"
 
+allure-stop: ## Stop Allure report web server
+	@echo "🛑 Stopping Allure server..."
+	docker compose -f $(ALLURE_COMPOSE) down
 
-#allure-start: ## Starts only Nginx web server to view the report.
-#	@echo "🚀 Starting Allure web-server (Nginx) to view reports..."
-#	@docker compose -f $(ALLURE_COMPOSE) --env-file $(ENV_FILE) up -d web-server
-#	@echo "✅ Allure report available: http://localhost:5050/allure/"
-#	@echo "✅ HTTP report available: http://localhost:5050/reports/"
-#allure-report: ## generate a new Allure report using the test-runner container, which contain Allure CLI.
-#	@echo "$(YELLOW)📈 Running Allure report generation inside test-runner...$(NC)"
-#	@docker compose -f $(MAIN_COMPOSE) exec -T $(CONTAINER_NAME) sh -c "allure generate --clean /app/allure-results -o /app/allure-reports"
-#	@echo "$(GREEN)✅ Allure report generated in: allure-reports/$(NC)"
+allure-restart: ## Restart Allure report web server
+	@echo "🔄 Restarting Allure server..."
+	docker compose -f $(ALLURE_COMPOSE) restart
 
-# Allure server logs
-allure-logs: ## allure
+allure-logs: ## Show Allure container logs
+	@echo "📜 Allure logs..."
 	docker compose -f $(ALLURE_COMPOSE) logs -f
+
+allure-report: ## Generate new Allure report from results
+	@echo "$(YELLOW)📈 Generating Allure report...$(NC)"
+	@docker compose -f $(ALLURE_COMPOSE) exec -T allure-server sh -c "allure generate --clean allure-results -o allure-report"
