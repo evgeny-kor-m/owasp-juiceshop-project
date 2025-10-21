@@ -107,7 +107,7 @@ app-install: ## Deploy test application (OWASP Juice Shop)
 	@echo -e "${YELLOW}Waiting for Ingress Nginx Controller to be ready...${NC}"
 	kubectl wait --namespace ingress-nginx \
 		--for=condition=ready pod \
-		--selector=app.kubernetes.io/controller-type=nginx \
+		--selector=app.kubernetes.io/component=controller \
 		--timeout=90s
 	@echo -e "${GREEN}Installing ${BLUE}OWASP Juice Shop ${GREEN}application...${NC}"
 	kubectl apply -f owasp-juiceshop/juice-shop-deployment.yaml
