@@ -33,8 +33,7 @@ endef
 help: ## show the certificate. Disputes a list of all available commands with their descriptions
 	@echo "$(YELLOW)🚀 UI Testing with k3d support $(NC)"
 	@echo "$(BLUE)Available commands:$(NC)"
-#	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-20s$(NC) %s\n", $$1, $$2}'
-	@grep make -pr | awk -F: '/^[a-zA-Z0-9_-]+:([^=]|$)/ {print $1}' | sort
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-20s$(NC) %s\n", $$1, $$2}'
 
 # === Basic teams ===
 build: ## Collect Docker image. For everyday development, to use the Docker cache by default, which will significantly speed up repeated assemblies.
