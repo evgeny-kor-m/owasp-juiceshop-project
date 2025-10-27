@@ -58,7 +58,7 @@ def web_base_url():
 @pytest.fixture(scope="session")
 def api_session():
     """
-    Fixture for creating a requests.Session session.
+    Fixture for creating a requests.
     Helps preserve cookies and headers between requests.
     """
     session = requests.Session()
@@ -81,3 +81,19 @@ def setup_teardown_driver(request):
     yield driver
 
     web_wrapper.quit_driver()
+
+def pytest_configure(config):
+    """Hook is executed before all tests start"""
+    import os
+    if not os.path.exists("screenshots"):
+        os.makedirs("screenshots")
+    print("\n" + "="*50)
+    print("PYTEST: Test execution started")
+    print("="*50)
+
+
+def pytest_unconfigure(config):
+    """Hook is executed after all tests finish"""
+    print("\n" + "="*50)
+    print("PYTEST: Test execution finished")
+    print("="*50)
