@@ -111,6 +111,7 @@ app-install: ## Deploy test application (OWASP Juice Shop)
 		--timeout=90s
 	@echo "${GREEN}Installing ${BLUE}OWASP Juice Shop ${GREEN}application...${NC}"
 	kubectl apply -f owasp-juiceshop/juice-shop-deployment.yaml
+	@echo "${GREEN}http://juice-shop.local:8080/ - Juice Shop application${NC}"
 
 # ========================================================
 # 🧩 DEBUGGING

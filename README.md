@@ -53,6 +53,8 @@ Allure Report: http://localhost:5050/allure/
 
 HTML Report: http://localhost:5050/reports/
 
+URL of juse shop site: http://juice-shop.local:8080/
+
 Makefile Commands
 Command             Description
 make help           Shows a list of available commands.
