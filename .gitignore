@@ -49,7 +49,7 @@ Thumbs.db # Windows
 .settings/
 
 # Configuration files specific to the user/environment
-.env
+#.env
 #docker/.env
 .flaskenv
 *.local
