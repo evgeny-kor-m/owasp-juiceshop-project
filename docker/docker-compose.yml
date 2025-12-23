@@ -3,38 +3,39 @@
 services:
   test-runner:
     build:
-      context: ${PROJECT_ROOT_PATH:-.}
+      context: ..
       dockerfile: ./docker/Dockerfile
-    image: ${TEST_RUNNER_IMAGE:-test-runner:latest}
-    container_name: test-runner-${ENVIRONMENT:-local}
+    image: ${TEST_RUNNER_IMAGE}
+    container_name: test-runner-${ENVIRONMENT}
     ports:
       - "${TEST_RUNNER_PORT:-4040}:4040"
     deploy:
       resources:
         limits:
-          cpus: '${CPU_LIMIT:-1}'
-          memory: ${MEMORY_LIMIT:-1G}
+          cpus: '${CPU_LIMIT}'
+          memory: ${MEMORY_LIMIT}
         reservations:
-          cpus: '${CPU_RESERVATION:-0.5}'
-          memory: ${MEMORY_RESERVATION:-1G}
+          cpus: '${CPU_RESERVATION}'
+          memory: ${MEMORY_RESERVATION}
     volumes:
-      - ${PROJECT_ROOT_PATH:-..}:/app
-      - ${ALLURE_RESULTS_PATH:-../allure-results}:/app/allure-results
-      - ${ALLURE_REPORT_PATH:-../allure-reports}:/app/allure-reports
-      - ${HTML_REPORT_PATH:-../html-reports}:/app/html-reports
-      - ${LOGS_PATH:-../logs}:/app/logs
-      - ${SCREENSHOTS:-../screenshots}:/app/screenshots
+      - ../:/app
+      - ${ALLURE_RESULTS_PATH}:/app/allure-results
+      - ${ALLURE_REPORT_PATH}:/app/allure-reports
+      - ${HTML_REPORT_PATH}:/app/html-reports
+      - ${LOGS_PATH}:/app/logs
+      - ${SCREENSHOTS}:/app/screenshots
     extra_hosts:
       - "juice-shop.local:host-gateway" # Mapping Hostname on IP hosts
+      - "host.docker.internal:host-gateway"
     environment:     # Set environment variables that the application inside the container needs.
       # Application variables needed for testing.
       - JUICESHOP_BASE_URL=${JUICESHOP_BASE_URL}
-      - API_BASE_URL=${API_BASE_URL:-http://host.docker.internal:8080}
-      - WEB_BASE_URL=${WEB_BASE_URL:-http://juice-shop.local:8080}
+      - API_BASE_URL=${API_BASE_URL}
+      - WEB_BASE_URL=${WEB_BASE_URL}
       # Python-specific environment variables.
-      - PYTHONPATH=${PYTHONPATH:-/app}
-      - LOG_LEVEL=${LOG_LEVEL:-INFO}
-      - ENVIRONMENT=${ENVIRONMENT:-local}
+      - PYTHONPATH=${PYTHONPATH}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - ENVIRONMENT=${ENVIRONMENT}
     # The command to execute when the container starts. We use a bash command to run multiple commands sequentially.
 #    command: /bin/bash -c "
 #      # Run pytest with various report plugins.
@@ -50,9 +51,10 @@ services:
 #      --alluredir=/app/allure-results \
 #      && allure generate --clean /app/allure-results -o /app/allure-reports
 #      "
-    command: /bin/bash -c "pytest --html=/app/html-reports/report.html --self-contained-html --alluredir=/app/allure-results && allure generate --clean /app/allure-results -o /app/allure-reports"
-
-
+    command: /bin/bash -c "
+              pytest --html=/app/html-reports/report.html --self-contained-html --alluredir=/app/allure-results || true;
+              allure generate --clean /app/allure-results -o /app/allure-reports
+      "
     restart: no
 
     # Здоровье контейнера
@@ -64,4 +66,4 @@ services:
 
 networks:
   default:
-    name: juiceshop-testing-network-${ENVIRONMENT:-local}
+    name: juiceshop-testing-network-${ENVIRONMENT}

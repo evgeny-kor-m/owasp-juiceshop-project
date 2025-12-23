@@ -66,21 +66,19 @@ def api_session():
     yield session
     session.close()
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session", autouse=True)
 def setup_teardown_driver(request):
     """
     Fixture for initializing and closing the driver using the wrapper class.
     """
+    print("\n=== PYTEST: Start of all tests ===")
     web_wrapper = SeleniumWrapper()
     driver = web_wrapper.get_driver()
-
-    # # Clean before test
-    # driver.execute_script("window.localStorage.clear(); window.sessionStorage.clear();")
-    # logger.info("🧹 Cleared browser localStorage and sessionStorage for a fresh start.")
 
     yield driver
 
     web_wrapper.quit_driver()
+    print("\n=== PYTEST: End of all tests ===")
 
 def pytest_configure(config):
     """Hook is executed before all tests start"""
