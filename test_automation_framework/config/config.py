@@ -12,7 +12,7 @@ class Config:
     # Базовые URL
     API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8080")
     WEB_BASE_URL = os.getenv("WEB_BASE_URL", "http://localhost:3000")
-    JUICESHOP_BASE_URL = os.getenv("JUICESHOP_BASE_URL", API_BASE_URL)
+    #JUICESHOP_BASE_URL = os.getenv("JUICESHOP_BASE_URL", API_BASE_URL)
 
     # Окружение
     ENVIRONMENT = os.getenv("ENVIRONMENT", "local")

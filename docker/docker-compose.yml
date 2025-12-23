@@ -29,7 +29,7 @@ services:
       - "host.docker.internal:host-gateway"
     environment:     # Set environment variables that the application inside the container needs.
       # Application variables needed for testing.
-      - JUICESHOP_BASE_URL=${JUICESHOP_BASE_URL}
+      #- JUICESHOP_BASE_URL=${JUICESHOP_BASE_URL}
       - API_BASE_URL=${API_BASE_URL}
       - WEB_BASE_URL=${WEB_BASE_URL}
       # Python-specific environment variables.
