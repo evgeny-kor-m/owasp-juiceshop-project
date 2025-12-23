@@ -70,14 +70,14 @@ def setup_teardown_driver(request):
     """
     Fixture for initializing and closing the driver using the wrapper class.
     """
-    logger.info("\n=== PYTEST: Start of all tests ===")
+    logger.info("\n=== PYTEST: Start browser session ===")
     web_wrapper = SeleniumWrapper()
     driver = web_wrapper.get_driver()
 
     yield driver
 
     web_wrapper.quit_driver()
-    logger.info("\n=== PYTEST: End of all tests ===")
+    logger.info("\n=== PYTEST: End browser session ===")
 
 def pytest_configure(config):
     """Hook is executed before all tests start"""

@@ -37,3 +37,4 @@ class Config:
 
 # Создаем экземпляр для импорта в тесты
 config = Config()
+config.print_config()
