@@ -118,7 +118,7 @@ app-install: ## Deploy test application (OWASP Juice Shop)
 # ========================================================
 shell: ## Enter container shell (interactive bash)
 	@echo "$(YELLOW)🐚 Entering container shell...$(NC)"
-	docker compose -f $(MAIN_COMPOSE) run --rm $(CONTAINER_NAME) bash || true
+	docker compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) run --rm $(CONTAINER_NAME) bash || true
 
 logs: ## Show container logs
 	@echo "$(YELLOW)📜 Showing container logs...$(NC)"
