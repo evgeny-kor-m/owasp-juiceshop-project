@@ -2,17 +2,38 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Находим корень проекта автоматически
-# (поднимаемся на 2 уровня выше от /config/config.py)
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+# Загружаем переменные из .env файла
+# Если config.py лежит в подпапке, можно указать точный путь
+load_dotenv()
 
-# Загружаем .env из корня
-load_dotenv(BASE_DIR / ".env")
+class Config:
+    """Класс для управления настройками проекта."""
 
-class Settings:
-    # Используем os.getenv(ключ, дефолтное_значение)
-    APP_URL: str = os.getenv("APP_URL", "[https://default.url](https://default.url)")
-    API_KEY: str = os.getenv("API_KEY", "")
-    DEBUG: bool = os.getenv("DEBUG", "False").lower() == "true"
+    # Базовые URL
+    API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8080")
+    WEB_BASE_URL = os.getenv("WEB_BASE_URL", "http://localhost:3000")
+    JUICESHOP_BASE_URL = os.getenv("JUICESHOP_BASE_URL", API_BASE_URL)
 
-settings = Settings()
+    # Окружение
+    ENVIRONMENT = os.getenv("ENVIRONMENT", "local")
+    LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+
+    # Пути (используем Path для кроссплатформенности)
+    BASE_DIR = Path(__file__).resolve().parent
+    ALLURE_RESULTS = BASE_DIR / os.getenv("ALLURE_RESULTS_PATH", "allure-results")
+    LOGS_DIR = BASE_DIR / os.getenv("LOGS_PATH", "logs")
+
+    # Настройки таймаутов
+    DEFAULT_TIMEOUT = 10  # секунд
+
+    @classmethod
+    def print_config(cls):
+        """Метод для отладки: выводит текущие настройки."""
+        print(f"--- Configuration [{cls.ENVIRONMENT}] ---")
+        print(f"API URL: {cls.API_BASE_URL}")
+        print(f"Web URL: {cls.WEB_BASE_URL}")
+        print(f"Log Level: {cls.LOG_LEVEL}")
+        print("---------------------------------------")
+
+# Создаем экземпляр для импорта в тесты
+config = Config()

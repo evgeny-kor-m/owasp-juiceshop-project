@@ -15,7 +15,7 @@ NC = \033[0m
 DOCKER_DIR = docker
 MAIN_COMPOSE = $(DOCKER_DIR)/docker-compose.yml
 ALLURE_COMPOSE = $(DOCKER_DIR)/allure-compose.yml
-ENV_FILE = $(DOCKER_DIR)/.env
+ENV_FILE = .env
 
 # Variables
 K3D_CLUSTER = test-lab

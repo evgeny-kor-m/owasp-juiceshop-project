@@ -1,12 +1,15 @@
 # test_automation_framework/tests/conftest.py
-import pytest
 import os
+
+import pytest
 import requests
 import logging
 from test_automation_framework.web_utils.selenium_wrapper import SeleniumWrapper
+from test_automation_framework.config import config
 
 # Read LOG_LEVEL from .env (default to INFO if not defined)
-log_level_str = os.getenv("LOG_LEVEL", "INFO").strip().upper()
+#log_level_str = os.getenv("LOG_LEVEL", "INFO").strip().upper()
+log_level_str = config.LOG_LEVEL.upper()
 
 # Convert the string to an actual logging level constant (default to INFO if invalid)
 log_level = getattr(logging, log_level_str, logging.INFO)
@@ -17,15 +20,11 @@ logging.basicConfig(
     format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
     handlers=[
         logging.StreamHandler(),                      # Output to console
-        logging.FileHandler("logs/test_run.log")      # Output to file
+        logging.FileHandler(config.LOGS_DIR / "test_run.log")      # Output to file
     ]
 )
 
 logger = logging.getLogger(__name__)
-
-#JUICESHOP_BASE_URL = "JUICESHOP_BASE_URL"
-WEB_BASE_URL = "WEB_BASE_URL"
-API_BASE_URL  = "API_BASE_URL"
 
 @pytest.fixture(scope="session")
 def api_base_url():
@@ -34,9 +33,9 @@ def api_base_url():
     If the variable is not set, it raises an error to prevent
     running tests without a target.
     """
-    url = os.getenv(API_BASE_URL)
+    url = config.API_BASE_URL
     if not url:
-        raise ValueError(f"Environment variable {API_BASE_URL} is not set. "
+        raise ValueError(f"Environment variable API_BASE_URL is not set. "
                          "Please specify the URL of the Juice Shop application, for example: "
                          "http://host.docker.internal:8080")
     return url
@@ -48,9 +47,9 @@ def web_base_url():
     If the variable is not set, it raises an error to prevent
     running tests without a target.
     """
-    url = os.getenv(WEB_BASE_URL)
+    url = config.WEB_BASE_URL
     if not url:
-        raise ValueError(f"Environment variable {WEB_BASE_URL} is not set. "
+        raise ValueError(f"Environment variable WEB_BASE_URL is not set. "
                          "Please specify the URL of the Juice Shop application, for example: "
                          "http://host.docker.internal:8080")
     return url
@@ -71,27 +70,27 @@ def setup_teardown_driver(request):
     """
     Fixture for initializing and closing the driver using the wrapper class.
     """
-    print("\n=== PYTEST: Start of all tests ===")
+    logger.info("\n=== PYTEST: Start of all tests ===")
     web_wrapper = SeleniumWrapper()
     driver = web_wrapper.get_driver()
 
     yield driver
 
     web_wrapper.quit_driver()
-    print("\n=== PYTEST: End of all tests ===")
+    logger.info("\n=== PYTEST: End of all tests ===")
 
 def pytest_configure(config):
     """Hook is executed before all tests start"""
-    import os
-    if not os.path.exists("screenshots"):
-        os.makedirs("screenshots")
-    print("\n" + "="*50)
-    print("PYTEST: Test execution started")
-    print("="*50)
+    os.makedirs(config.SCREENSHOTS_DIR, exist_ok=True)
+    os.makedirs(config.HTML_REPORTS, exist_ok=True)
+
+    logger.info("\n" + "="*50)
+    logger.info("PYTEST: Test execution started")
+    logger.info("="*50)
 
 
 def pytest_unconfigure(config):
     """Hook is executed after all tests finish"""
-    print("\n" + "="*50)
-    print("PYTEST: Test execution finished")
-    print("="*50)
+    logger.info("\n" + "="*50)
+    logger.info("PYTEST: Test execution finished")
+    logger.info("="*50)
