@@ -37,20 +37,6 @@ services:
       - LOG_LEVEL=${LOG_LEVEL}
       - ENVIRONMENT=${ENVIRONMENT}
     # The command to execute when the container starts. We use a bash command to run multiple commands sequentially.
-#    command: /bin/bash -c "
-#      # Run pytest with various report plugins.
-#      pytest \
-#      --json-report \
-#      --json-report-file=/app/html-reports/json_report.json \
-#      --cov=. \
-#      --cov-report=html:/app/html-reports/coverage_html \
-#      --cov-report=xml:/app/html-reports/coverage.xml \
-#      --cov-report=term-missing \
-#      --html=/app/html-reports/report.html \
-#      --self-contained-html \
-#      --alluredir=/app/allure-results \
-#      && allure generate --clean /app/allure-results -o /app/allure-reports
-#      "
     command: /bin/bash -c "pytest --html=/app/html-reports/report.html --self-contained-html --alluredir=/app/allure-results || true; allure generate --clean /app/allure-results -o /app/allure-reports"
     restart: no
 
