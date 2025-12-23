@@ -83,9 +83,9 @@ def pytest_configure(config):
     """Hook is executed before all tests start"""
     os.makedirs(config.SCREENSHOTS_DIR, exist_ok=True)
     os.makedirs(config.HTML_REPORTS, exist_ok=True)
-
     logger.info("\n" + "="*50)
     logger.info("PYTEST: Test execution started")
+    logger.info(f"(ENVIRONMENT: {config.ENVIRONMENT})")
     logger.info("="*50)
 
 

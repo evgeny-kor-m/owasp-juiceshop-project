@@ -51,10 +51,7 @@ services:
 #      --alluredir=/app/allure-results \
 #      && allure generate --clean /app/allure-results -o /app/allure-reports
 #      "
-    command: /bin/bash -c "
-              pytest --html=/app/html-reports/report.html --self-contained-html --alluredir=/app/allure-results || true;
-              allure generate --clean /app/allure-results -o /app/allure-reports
-      "
+    command: /bin/bash -c "pytest --html=/app/html-reports/report.html --self-contained-html --alluredir=/app/allure-results || true; allure generate --clean /app/allure-results -o /app/allure-reports"
     restart: no
 
     # Здоровье контейнера
