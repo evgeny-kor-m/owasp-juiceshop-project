@@ -16,7 +16,6 @@ class Config:
 
     # Окружение
     ENVIRONMENT = os.getenv("ENVIRONMENT", "local")
-
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
     # Пути (используем Path для кроссплатформенности)

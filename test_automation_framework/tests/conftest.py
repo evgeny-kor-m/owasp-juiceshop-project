@@ -5,7 +5,7 @@ import pytest
 import requests
 import logging
 from test_automation_framework.web_utils.selenium_wrapper import SeleniumWrapper
-from test_automation_framework.config import config
+from test_automation_framework.config.config import config
 
 # Read LOG_LEVEL from .env (default to INFO if not defined)
 #log_level_str = os.getenv("LOG_LEVEL", "INFO").strip().upper()
