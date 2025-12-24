@@ -13,7 +13,7 @@ log_level_str = app_config.LOG_LEVEL.upper()
 
 # Convert the string to an actual logging level constant (default to INFO if invalid)
 log_level = getattr(logging, log_level_str, logging.INFO)
-timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+log_file_name = f"{datetime.now().strftime("%Y-%m-%d_%H%M%S")}_test_run.log"
 
 # Configure the global logging settings
 logging.basicConfig(
@@ -21,7 +21,7 @@ logging.basicConfig(
     format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
     handlers=[
         logging.StreamHandler(),                      # Output to console
-        logging.FileHandler(app_config.LOGS_DIR / {timestamp} + "test_run.log")      # Output to file
+        logging.FileHandler(app_config.LOGS_DIR / log_file_name)      # Output to file
     ]
 )
 
