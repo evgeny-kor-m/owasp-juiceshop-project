@@ -1,19 +1,26 @@
 # test_automation_framework/tests/conftest.py
 import os
 from datetime import datetime
+from pathlib import Path
 import pytest
 import requests
 import logging
 from test_automation_framework.web_utils.selenium_wrapper import SeleniumWrapper
 from test_automation_framework.config.config import config as app_config
 
-# Read LOG_LEVEL from .env (default to INFO if not defined)
-#log_level_str = os.getenv("LOG_LEVEL", "INFO").strip().upper()
-log_level_str = app_config.LOG_LEVEL.upper()
+timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
 
+log_dir = Path(app_config.LOGS_DIR) if hasattr(app_config, 'LOGS_DIR') else Path("logs")
+log_dir.mkdir(parents=True, exist_ok=True) # Создаем директорию, если её нет
+
+# 3. Формируем полное имя файла
+log_file_name = f"test_run_{timestamp}.log"
+log_path = log_dir / log_file_name
+
+# Read LOG_LEVEL from .env (default to INFO if not defined)
 # Convert the string to an actual logging level constant (default to INFO if invalid)
+log_level_str = app_config.LOG_LEVEL.upper()
 log_level = getattr(logging, log_level_str, logging.INFO)
-log_file_name = f"{datetime.now().strftime("%Y-%m-%d_%H%M%S")}_test_run.log"
 
 # Configure the global logging settings
 logging.basicConfig(
@@ -21,7 +28,7 @@ logging.basicConfig(
     format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
     handlers=[
         logging.StreamHandler(),                      # Output to console
-        logging.FileHandler(app_config.LOGS_DIR / log_file_name)      # Output to file
+        logging.FileHandler(str(log_path))            # Output to file
     ]
 )
 

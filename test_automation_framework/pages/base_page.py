@@ -39,20 +39,20 @@ class BasePage:
             logger.debug("Attempting to close Welcome Banner...")
 
             # Check if banner exists
-            banner = WebDriverWait(self.driver, 3).until(
+            banner = WebDriverWait(self.driver, 0.5).until(
                 EC.presence_of_element_located(self.WELCOME_BANNER)
             )
 
             if banner.is_displayed():
                 # Click the Dismiss button
-                dismiss_btn = WebDriverWait(self.driver, 3).until(
+                dismiss_btn = WebDriverWait(self.driver, 0.5).until(
                     EC.element_to_be_clickable(self.DISMISS_BUTTON)
                 )
                 dismiss_btn.click()
                 logger.info("✅ Welcome Banner dismissed successfully")
 
                 # Wait until overlay disappears
-                WebDriverWait(self.driver, 5).until(
+                WebDriverWait(self.driver, 0.5).until(
                     EC.invisibility_of_element_located(self.ACTIVE_OVERLAY_BACKDROP)
                 )
                 time.sleep(0.5)  # Extra pause for stability
@@ -93,7 +93,7 @@ class BasePage:
         except Exception as e:
             logger.debug(f"Error while checking overlays: {e}")
 
-    def click(self, locator: tuple, timeout: int = 20):
+    def click(self, locator: tuple, timeout: int = 0.5):
         """
         Universal click method with overlay handling:
         1. Closes all overlays
@@ -120,7 +120,7 @@ class BasePage:
                 logger.error(f"❌ Both clicks failed. Original: {e}, JS: {js_e}")
                 raise
 
-    def wait_for_visible(self, locator: tuple, timeout: int = 20):
+    def wait_for_visible(self, locator: tuple, timeout: int = 0.5):
         """Waiting for an element to be visible"""
         logger.debug(f"Waiting for element to be visible: {locator}")
         try:
@@ -133,7 +133,7 @@ class BasePage:
             logger.error(f"❌ Element not visible within {timeout}s: {locator}")
             raise
 
-    def input_text(self, locator: tuple, text: str, clear_first: bool = True, timeout: int = 20):
+    def input_text(self, locator: tuple, text: str, clear_first: bool = True, timeout: int = 0.5):
         """Types text into an input field with optional clearing."""
         element = self.wait_for_visible(locator, timeout)
         try:
@@ -146,14 +146,14 @@ class BasePage:
             logger.error(f"❌ Failed to input text to {locator}: {e}")
             raise
 
-    def get_text(self, locator: tuple, timeout: int = 20) -> str:
+    def get_text(self, locator: tuple, timeout: int = 0.5) -> str:
         """Retrieves visible text from an element."""
         element = self.wait_for_visible(locator, timeout)
         text = element.text.strip()
         logger.debug(f"Text of element {locator}: '{text}'")
         return text
 
-    def is_element_visible(self, locator: tuple, timeout: int = 5) -> bool:
+    def is_element_visible(self, locator: tuple, timeout: int = 0.5) -> bool:
         """Checking the visibility of an element"""
         try:
             WebDriverWait(self.driver, timeout).until(

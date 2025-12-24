@@ -69,11 +69,11 @@ class LoginPage(BasePage):
 
         try:
             # Step 1: Wait for redirect
-            WebDriverWait(self.driver, 10).until(EC.url_changes(initial_url))
+            WebDriverWait(self.driver, 0.5).until(EC.url_changes(initial_url))
             logger.info(f"✅ URL changed to: {self.driver.current_url}")
 
             # Step 2: Wait for account button
-            WebDriverWait(self.driver, 10).until(
+            WebDriverWait(self.driver, 0.5).until(
                 EC.visibility_of_element_located(self.ACCOUNT_BUTTON)
             )
 
