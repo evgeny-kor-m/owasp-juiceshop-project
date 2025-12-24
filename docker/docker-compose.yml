@@ -8,22 +8,22 @@ services:
     image: ${TEST_RUNNER_IMAGE}
     container_name: test-runner-${ENVIRONMENT}
     ports:
-      - "${TEST_RUNNER_PORT:-4040}:4040"
+      - "${TEST_RUNNER_PORT}:4040"
     deploy:
       resources:
         limits:
-          cpus: '${CPU_LIMIT}'
+          cpus: ${CPU_LIMIT}
           memory: ${MEMORY_LIMIT}
         reservations:
-          cpus: '${CPU_RESERVATION}'
+          cpus: ${CPU_RESERVATION}
           memory: ${MEMORY_RESERVATION}
     volumes:
       - ../:/app
-      - ${ALLURE_RESULTS_PATH}:/app/allure-results
-      - ${ALLURE_REPORT_PATH}:/app/allure-reports
-      - ${HTML_REPORT_PATH}:/app/html-reports
-      - ${LOGS_PATH}:/app/logs
-      - ${SCREENSHOTS}:/app/screenshots
+      - ../${ALLURE_RESULTS_PATH}:/app/allure-results
+      - ../${ALLURE_REPORT_PATH}:/app/allure-reports
+      - ../${HTML_REPORT_PATH}:/app/html-reports
+      - ../${LOGS_PATH}:/app/logs
+      - ../${SCREENSHOTS}:/app/screenshots
     extra_hosts:
       - "juice-shop.local:host-gateway" # Mapping Hostname on IP hosts
       - "host.docker.internal:host-gateway"
