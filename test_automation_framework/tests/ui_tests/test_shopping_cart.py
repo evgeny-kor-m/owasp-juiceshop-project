@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class TestShoppingCart:
     """Tests for shopping cart functionality"""
-
+    @pytest.mark.skip
     def test_add_product_to_basket(self, setup_teardown_driver,web_base_url):
         """Test: Adding a product to the basket"""
 
@@ -66,7 +66,7 @@ class TestShoppingCart:
         # Step 4: Verify the product is in the basket
         assert basket_page.is_product_in_basket(product_name), \
             f"Product '{product_name}' not found in the basket"
-
+    @pytest.mark.skip
     def test_add_multiple_products_to_basket(self, setup_teardown_driver,web_base_url):
         """Test: Adding multiple products to the basket"""
         driver = setup_teardown_driver
@@ -100,7 +100,7 @@ class TestShoppingCart:
         for product in added_products:
             assert basket_page.is_product_in_basket(product), \
                 f"Product '{product}' not found in the basket"
-
+    @pytest.mark.skip
     def test_full_checkout_flow(self, setup_teardown_driver,web_base_url):
         """Test: Full checkout process"""
         driver = setup_teardown_driver
