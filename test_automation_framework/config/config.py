@@ -19,7 +19,7 @@ class Config:
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
     # Пути (используем Path для кроссплатформенности)
-    BASE_DIR = Path(__file__).resolve().parent.parent
+    BASE_DIR = Path(__file__).resolve().parent.parent.parent
     ALLURE_RESULTS = BASE_DIR / os.getenv("ALLURE_RESULTS_PATH", "allure-results")
     LOGS_DIR = BASE_DIR / os.getenv("LOGS_PATH", "logs")
 
