@@ -21,7 +21,7 @@ logging.basicConfig(
     format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
     handlers=[
         logging.StreamHandler(),                      # Output to console
-        logging.FileHandler(app_config.LOGS_DIR / timestamp + "test_run.log")      # Output to file
+        logging.FileHandler(app_config.LOGS_DIR / {timestamp} + "test_run.log")      # Output to file
     ]
 )
 
