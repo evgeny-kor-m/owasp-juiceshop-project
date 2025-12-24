@@ -9,7 +9,7 @@ def test_full_e2e_flow_with_api(api_base_url, api_session):
     Testing the full End-to-End flow using the API.
     """
 
-    logger.info("\n--- Starting E2E Test for OWASP Juice Shop (with API) ---")
+    logger.info("--- Starting E2E Test for OWASP Juice Shop (with API) ---")
 
     # Step 1: Register a new user
     logger.debug("1. Registering a new user...")
