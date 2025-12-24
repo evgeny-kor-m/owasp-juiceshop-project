@@ -33,11 +33,8 @@ class Config:
         cls.logger.info(f"--- Configuration [{cls.ENVIRONMENT}] ---")
         cls.logger.info(f"API URL: {cls.API_BASE_URL}")
         cls.logger.info(f"Web URL: {cls.WEB_BASE_URL}")
+        cls.logger.info(f"Allure results: {cls.ALLURE_RESULTS}")
         cls.logger.info(f"Log Level: {cls.LOG_LEVEL}")
         cls.logger.info(f"Log path: {cls.LOGS_DIR}")
         cls.logger.info(f"Base path: {cls.BASE_DIR}")
         cls.logger.info("---------------------------------------")
-
-# Создаем экземпляр для импорта в тесты
-config = Config()
-config.print_config()

@@ -4,7 +4,7 @@ import requests
 import logging
 from test_automation_framework.web_utils.selenium_wrapper import SeleniumWrapper
 from test_automation_framework.config.logging_config import setup_logging
-from test_automation_framework.config.config import config as app_config
+from test_automation_framework.config.config import Config as app_config
 
 # Вызываем один раз при импорте conftest
 setup_logging()
@@ -64,6 +64,7 @@ def pytest_configure(config):
     """Hook is executed before all tests start"""
     # os.makedirs(config.SCREENSHOTS_DIR, exist_ok=True)
     # os.makedirs(config.HTML_REPORTS, exist_ok=True)
+    app_config.print_config()
     logger.info("\n" + "="*50)
     logger.info("PYTEST: Test execution started")
     logger.info(f"(ENVIRONMENT: {app_config.ENVIRONMENT})")
