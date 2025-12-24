@@ -1,21 +1,24 @@
 # test_api_juceshop.py
+import logging
 from test_automation_framework.api.api_service import AuthAPI, BasketAPI, generate_random_email
+
+logger = logging.getLogger(__name__)
 
 def test_full_e2e_flow_with_api(api_base_url, api_session):
     """
     Testing the full End-to-End flow using the API.
     """
 
-    print("\n--- Starting E2E Test for OWASP Juice Shop (with API) ---")
+    logger.info("\n--- Starting E2E Test for OWASP Juice Shop (with API) ---")
 
     # Step 1: Register a new user
-    print("1. Registering a new user...")
+    logger.debug("1. Registering a new user...")
     auth_api = AuthAPI(api_session, api_base_url)
     new_email = generate_random_email()
     password = "MyStrongPassword123"
     register_response = auth_api.register_new_user(new_email, password)
     assert register_response.status_code == 201, f"Registration failed: {register_response.status_code}"
-    print(f"    User {new_email} successfully registered.")
+    logger.debug(f"    User {new_email} successfully registered.")
 
     # Step 2: Log in to the system
     print("2. Logging in to the system...")
