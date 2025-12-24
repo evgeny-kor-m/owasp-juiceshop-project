@@ -1,36 +1,13 @@
 # test_automation_framework/tests/conftest.py
-import os
-from datetime import datetime
-from pathlib import Path
 import pytest
 import requests
 import logging
 from test_automation_framework.web_utils.selenium_wrapper import SeleniumWrapper
+from test_automation_framework.config.logging_config import setup_logging
 from test_automation_framework.config.config import config as app_config
 
-timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
-
-log_dir = Path(app_config.LOGS_DIR) if hasattr(app_config, 'LOGS_DIR') else Path("logs")
-log_dir.mkdir(parents=True, exist_ok=True)
-
-log_file_name = f"test_run_{timestamp}.log"
-log_path = log_dir / log_file_name
-
-# Read LOG_LEVEL from .env (default to INFO if not defined)
-# Convert the string to an actual logging level constant (default to INFO if invalid)
-log_level_str = app_config.LOG_LEVEL.upper()
-log_level = getattr(logging, log_level_str, logging.INFO)
-
-# Configure the global logging settings
-logging.basicConfig(
-    level=log_level,
-    format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
-    handlers=[
-        logging.StreamHandler(),                      # Output to console
-        logging.FileHandler(str(log_path))            # Output to file
-    ]
-)
-
+# Вызываем один раз при импорте conftest
+setup_logging()
 logger = logging.getLogger(__name__)
 
 @pytest.fixture(scope="session")

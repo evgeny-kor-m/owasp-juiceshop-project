@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import logging
 
 # Загружаем переменные из .env файла
 # Если config.py лежит в подпапке, можно указать точный путь
@@ -8,7 +9,7 @@ load_dotenv()
 
 class Config:
     """Класс для управления настройками проекта."""
-
+    logger = logging.getLogger(__name__)
     # Базовые URL
     API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8080")
     WEB_BASE_URL = os.getenv("WEB_BASE_URL", "http://localhost:3000")
@@ -29,13 +30,13 @@ class Config:
     @classmethod
     def print_config(cls):
         """Метод для отладки: выводит текущие настройки."""
-        print(f"--- Configuration [{cls.ENVIRONMENT}] ---")
-        print(f"API URL: {cls.API_BASE_URL}")
-        print(f"Web URL: {cls.WEB_BASE_URL}")
-        print(f"Log Level: {cls.LOG_LEVEL}")
-        print(f"Log path: {cls.LOGS_DIR}")
-        print(f"Base path: {cls.BASE_DIR}")
-        print("---------------------------------------")
+        cls.logger.info(f"--- Configuration [{cls.ENVIRONMENT}] ---")
+        cls.logger.info(f"API URL: {cls.API_BASE_URL}")
+        cls.logger.info(f"Web URL: {cls.WEB_BASE_URL}")
+        cls.logger.info(f"Log Level: {cls.LOG_LEVEL}")
+        cls.logger.info(f"Log path: {cls.LOGS_DIR}")
+        cls.logger.info(f"Base path: {cls.BASE_DIR}")
+        cls.logger.info("---------------------------------------")
 
 # Создаем экземпляр для импорта в тесты
 config = Config()
