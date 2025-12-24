@@ -11,9 +11,8 @@ from test_automation_framework.config.config import config as app_config
 timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
 
 log_dir = Path(app_config.LOGS_DIR) if hasattr(app_config, 'LOGS_DIR') else Path("logs")
-log_dir.mkdir(parents=True, exist_ok=True) # Создаем директорию, если её нет
+log_dir.mkdir(parents=True, exist_ok=True)
 
-# 3. Формируем полное имя файла
 log_file_name = f"test_run_{timestamp}.log"
 log_path = log_dir / log_file_name
 
