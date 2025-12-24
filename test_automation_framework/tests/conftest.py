@@ -9,7 +9,7 @@ from test_automation_framework.config.config import config as app_config
 
 # Read LOG_LEVEL from .env (default to INFO if not defined)
 #log_level_str = os.getenv("LOG_LEVEL", "INFO").strip().upper()
-log_level_str = config.LOG_LEVEL.upper()
+log_level_str = app_config.LOG_LEVEL.upper()
 
 # Convert the string to an actual logging level constant (default to INFO if invalid)
 log_level = getattr(logging, log_level_str, logging.INFO)
@@ -36,8 +36,7 @@ def api_base_url():
     url = app_config.API_BASE_URL
     if not url:
         raise ValueError(f"Environment variable API_BASE_URL is not set. "
-                         "Please specify the URL of the Juice Shop application, for example: "
-                         "http://host.docker.internal:8080")
+                         "Please specify the URL of the Juice Shop application")
     return url
 
 @pytest.fixture(scope="session")
@@ -50,15 +49,13 @@ def web_base_url():
     url = app_config.WEB_BASE_URL
     if not url:
         raise ValueError(f"Environment variable WEB_BASE_URL is not set. "
-                         "Please specify the URL of the Juice Shop application, for example: "
-                         "http://host.docker.internal:8080")
+                         "Please specify the URL of the Juice Shop application")
     return url
 
 @pytest.fixture(scope="session")
 def api_session():
     """
-    Fixture for creating a requests.
-    Helps preserve cookies and headers between requests.
+    Fixture for creating a requests. Helps preserve cookies and headers between requests.
     """
     session = requests.Session()
     session.headers.update({'Host': 'juice-shop.local'})
