@@ -33,6 +33,8 @@ class Config:
         print(f"API URL: {cls.API_BASE_URL}")
         print(f"Web URL: {cls.WEB_BASE_URL}")
         print(f"Log Level: {cls.LOG_LEVEL}")
+        print(f"Log path: {cls.LOGS_DIR}")
+        print(f"Base path: {cls.BASE_DIR}")
         print("---------------------------------------")
 
 # Создаем экземпляр для импорта в тесты
