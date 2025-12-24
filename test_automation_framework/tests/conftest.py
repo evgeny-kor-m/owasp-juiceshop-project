@@ -5,7 +5,7 @@ import pytest
 import requests
 import logging
 from test_automation_framework.web_utils.selenium_wrapper import SeleniumWrapper
-from test_automation_framework.config.config import config
+from test_automation_framework.config.config import config as app_config
 
 # Read LOG_LEVEL from .env (default to INFO if not defined)
 #log_level_str = os.getenv("LOG_LEVEL", "INFO").strip().upper()
@@ -20,7 +20,7 @@ logging.basicConfig(
     format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
     handlers=[
         logging.StreamHandler(),                      # Output to console
-        logging.FileHandler(config.LOGS_DIR / "test_run.log")      # Output to file
+        logging.FileHandler(app_config.LOGS_DIR / "test_run.log")      # Output to file
     ]
 )
 
@@ -33,7 +33,7 @@ def api_base_url():
     If the variable is not set, it raises an error to prevent
     running tests without a target.
     """
-    url = config.API_BASE_URL
+    url = app_config.API_BASE_URL
     if not url:
         raise ValueError(f"Environment variable API_BASE_URL is not set. "
                          "Please specify the URL of the Juice Shop application, for example: "
@@ -47,7 +47,7 @@ def web_base_url():
     If the variable is not set, it raises an error to prevent
     running tests without a target.
     """
-    url = config.WEB_BASE_URL
+    url = app_config.WEB_BASE_URL
     if not url:
         raise ValueError(f"Environment variable WEB_BASE_URL is not set. "
                          "Please specify the URL of the Juice Shop application, for example: "
@@ -85,12 +85,17 @@ def pytest_configure(config):
     # os.makedirs(config.HTML_REPORTS, exist_ok=True)
     logger.info("\n" + "="*50)
     logger.info("PYTEST: Test execution started")
-    logger.info(f"(ENVIRONMENT: {config.ENVIRONMENT})")
+    logger.info(f"(ENVIRONMENT: {app_config.ENVIRONMENT})")
     logger.info("="*50)
 
 
 def pytest_unconfigure(config):
     """Hook is executed after all tests finish"""
-    logger.info("\n" + "="*50)
-    logger.info("PYTEST: Test execution finished")
-    logger.info("="*50)
+    try:
+        logger.info("\n" + "="*50)
+        logger.info("PYTEST: Test execution finished")
+        logger.info("="*50)
+    except ValueError:
+        logger.warning("log file already closed by pytest")
+        # Игнорируем ошибку, если логгер уже закрыт pytest-ом
+        pass
