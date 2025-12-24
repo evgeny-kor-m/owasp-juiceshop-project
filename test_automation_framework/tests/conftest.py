@@ -1,6 +1,6 @@
 # test_automation_framework/tests/conftest.py
 import os
-
+from datetime import datetime
 import pytest
 import requests
 import logging
@@ -13,6 +13,7 @@ log_level_str = app_config.LOG_LEVEL.upper()
 
 # Convert the string to an actual logging level constant (default to INFO if invalid)
 log_level = getattr(logging, log_level_str, logging.INFO)
+timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
 
 # Configure the global logging settings
 logging.basicConfig(
@@ -20,7 +21,7 @@ logging.basicConfig(
     format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
     handlers=[
         logging.StreamHandler(),                      # Output to console
-        logging.FileHandler(app_config.LOGS_DIR / "test_run.log")      # Output to file
+        logging.FileHandler(app_config.LOGS_DIR / timestamp + "test_run.log")      # Output to file
     ]
 )
 
