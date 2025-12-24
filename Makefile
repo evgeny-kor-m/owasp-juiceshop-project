@@ -167,4 +167,4 @@ allure-logs: ## Show Allure container logs
 
 allure-report: ## Generate new Allure report from results
 	@echo "$(YELLOW)📈 Generating Allure report...$(NC)"
-	@docker compose -f $(ALLURE_COMPOSE) exec -T allure-server sh -c "allure generate --clean allure-results -o allure-report"
+	@docker compose -f $(ALLURE_COMPOSE) --env-file $(ENV_FILE) exec -T allure-server sh -c "allure generate --clean allure-results -o allure-report"
