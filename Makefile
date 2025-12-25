@@ -173,19 +173,20 @@ allure-report: ## Generate new Allure report from results
 	@echo "$(GREEN)✅ Report generated!$(NC)"
 	@echo "$(YELLOW)🌐 Opening Allure report at http://localhost:$(ALLURE_PORT)/allure/ ...$(NC)"
 	@# Команда открытия в зависимости от ОС
-	@if [ "$$(uname -r | grep -i microsoft)" ]; then \
-	if [ -f "/mnt/c/Windows/explorer.exe" ]; then \
-	/mnt/c/Windows/explorer.exe "http://localhost:$(ALLURE_PORT)/allure/"; \
+	-@if [ "$$(uname -r | grep -i microsoft)" ]; then \
+	if command -v explorer.exe > /dev/null; then \
+	explorer.exe "http://localhost:$(ALLURE_PORT)/allure/" || true; \
+	elif [ -f "/mnt/c/Windows/explorer.exe" ]; then \
+	/mnt/c/Windows/explorer.exe "http://localhost:$(ALLURE_PORT)/allure/" || true; \
 	elif command -v powershell.exe > /dev/null; then \
-	powershell.exe -Command "Start-Process 'http://localhost:$(ALLURE_PORT)/allure/'"; \
+	powershell.exe -Command "Start-Process 'http://localhost:$(ALLURE_PORT)/allure/'" || true; \
 	else \
-	echo "$(RED)❌ WSL detected, but explorer.exe not found at /mnt/c/Windows/explorer.exe$(NC)"; \
-	echo "Please open manually: http://localhost:$(ALLURE_PORT)/allure/"; \
+	echo "$(RED)⚠️ WSL: explorer.exe and powershell.exe not found in PATH.$(NC)"; \
 	fi; \
 	elif [ "$$(uname)" = "Darwin" ]; then \
-	open "http://localhost:$(ALLURE_PORT)/allure/"; \
+	open "http://localhost:$(ALLURE_PORT)/allure/" || true; \
 	elif command -v xdg-open > /dev/null; then \
-	xdg-open "http://localhost:$(ALLURE_PORT)/allure/"; \
+	xdg-open "http://localhost:$(ALLURE_PORT)/allure/" || true; \
 	else \
-	echo "$(YELLOW)⚠️ Could not detect a browser opener. Please open manually: http://localhost:$(ALLURE_PORT)/allure/$(NC)"; \
+	echo "$(YELLOW)ℹ️ Please open manually: http://localhost:$(ALLURE_PORT)/allure/$(NC)"; \
 	fi
