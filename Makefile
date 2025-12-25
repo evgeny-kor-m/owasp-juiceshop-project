@@ -15,7 +15,9 @@ NC = \033[0m
 DOCKER_DIR = docker
 MAIN_COMPOSE = $(DOCKER_DIR)/docker-compose.yml
 ALLURE_COMPOSE = $(DOCKER_DIR)/allure-compose.yml
-ENV_FILE = .env
+ENV_FILE := .env
+include $(ENV_FILE)
+export $(shell sed 's/=.*//' $(ENV_FILE))
 
 # Variables
 K3D_CLUSTER = test-lab
@@ -171,10 +173,13 @@ allure-report: ## Generate new Allure report from results
 	@echo "$(GREEN)✅ Report generated!$(NC)"
 	@echo "$(YELLOW)🌐 Opening Allure report at http://localhost:$(ALLURE_PORT)/allure/ ...$(NC)"
 	@# Команда открытия в зависимости от ОС
-	@if [ "$$(uname)" = "Darwin" ]; then
-		open http://localhost:$(ALLURE_PORT)/allure/;
+	@if [ "$$(uname)" = "Darwin" ]; then \
+	open http://localhost:$(ALLURE_PORT)/allure/;
+
 	elif [ "$$(expr substr $$(uname -s) 1 5)" = "Linux" ]; then
-		xdg-open http://localhost:$(ALLURE_PORT)/allure/;
-	else
-		powershell.exe Start-Process http://localhost:$(ALLURE_PORT);
+
+	xdg-open http://localhost:$(ALLURE_PORT)/allure/; \
+	else \
+	powershell.exe Start-Process http://localhost:$(ALLURE_PORT)/allure/;
+
 	fi
