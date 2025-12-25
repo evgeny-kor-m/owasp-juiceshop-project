@@ -173,10 +173,12 @@ allure-report: ## Generate new Allure report from results
 	@echo "$(GREEN)✅ Report generated!$(NC)"
 	@echo "$(YELLOW)🌐 Opening Allure report at http://localhost:$(ALLURE_PORT)/allure/ ...$(NC)"
 	@# Команда открытия в зависимости от ОС
-	@if [ "$$(uname)" = "Darwin" ]; then \
-	open http://localhost:$(ALLURE_PORT)/allure/; \
-	elif [ "$$(expr substr $$(uname -s) 1 5)" = "Linux" ]; then \
-	xdg-open http://localhost:$(ALLURE_PORT)/allure/; \
+	@if [ "$$(uname -r | grep -i microsoft)" ]; then \
+	explorer.exe "http://localhost:$(ALLURE_PORT)/allure/"; \
+	elif [ "$$(uname)" = "Darwin" ]; then \
+	open "http://localhost:$(ALLURE_PORT)/allure/"; \
+	elif command -v xdg-open > /dev/null; then \
+	xdg-open "http://localhost:$(ALLURE_PORT)/allure/"; \
 	else \
-	powershell.exe Start-Process http://localhost:$(ALLURE_PORT)/allure/; \
+	echo "$(YELLOW)⚠️ Could not detect a browser opener. Please open manually: http://localhost:$(ALLURE_PORT)/allure/$(NC)"; \
 	fi
