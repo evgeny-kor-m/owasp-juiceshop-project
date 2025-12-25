@@ -174,9 +174,9 @@ allure-report: ## Generate new Allure report from results
 	@echo "$(YELLOW)🌐 Opening Allure report at http://localhost:$(ALLURE_PORT)/allure/ ...$(NC)"
 	@# Команда открытия в зависимости от ОС
 	@if [ "$$(uname)" = "Darwin" ]; then \
-	open http://localhost:$(ALLURE_PORT)/allure/;
-	elif [ "$$(expr substr $$(uname -s) 1 5)" = "Linux" ]; then
+	open http://localhost:$(ALLURE_PORT)/allure/; \
+	elif [ "$$(expr substr $$(uname -s) 1 5)" = "Linux" ]; then \
 	xdg-open http://localhost:$(ALLURE_PORT)/allure/; \
 	else \
-	powershell.exe Start-Process http://localhost:$(ALLURE_PORT)/allure/;
+	powershell.exe Start-Process http://localhost:$(ALLURE_PORT)/allure/; \
 	fi
