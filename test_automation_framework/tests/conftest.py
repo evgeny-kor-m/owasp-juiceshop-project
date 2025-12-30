@@ -41,17 +41,19 @@ def api_client():
     """
     Fixture for creating a requests. Helps preserve cookies and headers between requests.
     """
+    logger.info("=== PYTEST: Start api session ===")
     session = requests.Session()
     session.headers.update({'Host': 'juice-shop.local'})
     yield session
     session.close()
+    logger.info("\n=== PYTEST: End api session ===")
 
 @pytest.fixture(scope="function")
 def browser(request):
     """
     Fixture for initializing and closing the driver using the wrapper class.
     """
-    logger.info("\n=== PYTEST: Start browser session ===")
+    logger.info("=== PYTEST: Start browser session ===")
     web_wrapper = SeleniumWrapper()
     driver = web_wrapper.get_driver()
 
@@ -66,7 +68,7 @@ def pytest_configure(config):
     # os.makedirs(config.HTML_REPORTS, exist_ok=True)
     app_config.print_config()
     logger.info("\n" + "="*50)
-    logger.info("PYTEST: Test execution started")
+    logger.info("PYTEST: All tests execution started")
     logger.info(f"(ENVIRONMENT: {app_config.ENVIRONMENT})")
     logger.info("="*50)
 
@@ -75,7 +77,7 @@ def pytest_unconfigure(config):
     """Hook is executed after all tests finish"""
     try:
         logger.info("\n" + "="*50)
-        logger.info("PYTEST: Test execution finished")
+        logger.info("PYTEST: All test execution finished")
         logger.info("="*50)
     except ValueError:
         logger.warning("log file already closed by pytest")
