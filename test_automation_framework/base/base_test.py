@@ -1,5 +1,8 @@
 import pytest
+import logging
 from test_automation_framework.config.config import Config
+
+logger = logging.getLogger(__name__)
 
 class BaseTest:
     """
@@ -14,6 +17,7 @@ class BaseTest:
         self.api_url = api_base_url
         self.config = Config
         # self.db = db_connection
+        logger.info(f"Setup API base settings")
 
     def get_token_header(self, token):
         """Build Authorization header"""
@@ -29,3 +33,4 @@ class BaseUITest(BaseTest):
     def setup_ui(self, browser):
         # Initialize browser only for tests inheriting from BaseUITest
         self.driver = browser
+        logger.info(f"Setup UI base settings")
