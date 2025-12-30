@@ -9,7 +9,6 @@ class BaseTest:
     Base test class.
     Provides common fixtures and helpers.
     """
-
     @pytest.fixture(autouse=True)
     def setup_base(self, api_client, api_base_url):
         # Expose fixtures as instance attributes
@@ -28,9 +27,9 @@ class BaseUITest(BaseTest):
     Base class for UI tests.
     Extends BaseTest with browser support.
     """
-
     @pytest.fixture(autouse=True)
-    def setup_ui(self, browser):
+    def setup_ui(self, browser, web_base_url):
         # Initialize browser only for tests inheriting from BaseUITest
         self.driver = browser
+        self.web_url = web_base_url
         logger.info(f"Setup UI base settings")
