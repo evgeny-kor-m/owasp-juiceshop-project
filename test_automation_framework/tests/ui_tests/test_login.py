@@ -16,7 +16,7 @@ class TestJuiceShopLoginUI(BaseUITest):
 
         # Выполняем действия, используя методы Page Object
         login_page.open()
-        login_page.enter_credentials("admin@juice-sh.op", "admin123")
+        login_page.enter_credentials("admin@juice-sh.op", "ERRORadmin123")
         login_page.click_login()
         login_page.verify_login_successful()
 

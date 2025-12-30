@@ -28,8 +28,13 @@ class BaseUITest(BaseTest):
     Extends BaseTest with browser support.
     """
     @pytest.fixture(autouse=True)
-    def setup_ui(self, browser, web_base_url):
+    def setup_ui(self, browser, web_base_url, request):
         # Initialize browser only for tests inheriting from BaseUITest
         self.driver = browser
         self.web_url = web_base_url
+
+        # Attach driver to the test request for crash handling in conftest.py
+        if request.node:
+            request.node.driver = self.driver
+
         logger.info(f"Setup UI base settings")

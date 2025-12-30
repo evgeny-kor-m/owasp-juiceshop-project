@@ -1,5 +1,6 @@
 # test_automation_framework/tests/conftest.py
 import pytest
+import allure
 import requests
 import logging
 from test_automation_framework.web_utils.selenium_wrapper import SeleniumWrapper
@@ -9,6 +10,36 @@ from test_automation_framework.config.config import Config as app_config
 # Вызываем один раз при импорте conftest
 setup_logging()
 logger = logging.getLogger(__name__)
+
+
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    """
+    Pytest hook to capture test results.
+    Takes a screenshot on test failure if a driver is available.
+    """
+    # Run the test and get the result
+    outcome = yield
+    rep = outcome.get_result()
+    # Handle only failed test executions
+    if rep.when == "call" and rep.failed:
+        # Get driver if the test provides one (UI tests only)
+        mode = "a" if not hasattr(item, "fixturenames") else "w"
+        driver = getattr(item, "driver", None)
+
+        if driver:
+            try:
+                # Capture screenshot and attach it to Allure
+                allure.attach(
+                    driver.get_screenshot_as_png(),
+                    name=f"screenshot_{item.name}",
+                    attachment_type=allure.attachment_type.PNG
+                )
+                logging.error(
+                    f"Screenshot for failed test '{item.name}' attached to Allure."
+                )
+            except Exception as e:
+                logging.error(f"Failed to capture screenshot: {e}")
 
 @pytest.fixture(scope="session")
 def api_base_url():
@@ -46,7 +77,7 @@ def api_client():
     session.headers.update({'Host': 'juice-shop.local'})
     yield session
     session.close()
-    logger.info("\n=== PYTEST: End api session ===")
+    logger.info("=== PYTEST: End api session ===")
 
 @pytest.fixture(scope="function")
 def browser(request):
@@ -60,7 +91,7 @@ def browser(request):
     yield driver
 
     web_wrapper.quit_driver()
-    logger.info("\n=== PYTEST: End browser session ===")
+    logger.info("=== PYTEST: End browser session ===")
 
 def pytest_configure(config):
     """Hook is executed before all tests start"""
