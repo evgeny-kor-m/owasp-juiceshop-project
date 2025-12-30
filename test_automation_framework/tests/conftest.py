@@ -36,8 +36,8 @@ def web_base_url():
                          "Please specify the URL of the Juice Shop application")
     return url
 
-@pytest.fixture(scope="session")
-def api_session():
+@pytest.fixture(scope="function")
+def api_client():
     """
     Fixture for creating a requests. Helps preserve cookies and headers between requests.
     """
@@ -46,8 +46,8 @@ def api_session():
     yield session
     session.close()
 
-@pytest.fixture(scope="session", autouse=True)
-def setup_teardown_driver(request):
+@pytest.fixture(scope="function")
+def browser(request):
     """
     Fixture for initializing and closing the driver using the wrapper class.
     """

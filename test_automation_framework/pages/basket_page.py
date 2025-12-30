@@ -3,7 +3,7 @@
 # ============================================
 import logging
 from selenium.webdriver.common.by import By
-from .base_page import BasePage
+from test_automation_framework.base.base_page import BasePage
 
 logger = logging.getLogger(__name__)
 

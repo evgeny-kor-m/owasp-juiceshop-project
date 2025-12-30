@@ -5,7 +5,7 @@ import logging
 import time
 from selenium.webdriver.common.by import By
 
-from .base_page import BasePage
+from test_automation_framework.base.base_page import BasePage
 
 logger = logging.getLogger(__name__)
 
@@ -37,14 +37,14 @@ class ProductsPage(BasePage):
         products = self.find_elements(self.PRODUCT_NAME)
         if index < len(products):
             return products[index].text
-        return None
+        return ""
 
     def add_product_to_basket_by_index(self, index: int = 0) -> str:
         """
         Adds a product to the basket by its index with proper overlay handling.
         """
         logger.info(f"➕ Adding product #{index} to basket...")
-
+        product_name = ""
         self.close_all_overlays()
         self.driver.execute_script("window.scrollTo(0, 0);")
         time.sleep(0.3)
@@ -52,7 +52,7 @@ class ProductsPage(BasePage):
         buttons = self.find_elements(self.ADD_TO_BASKET_BUTTONS)
         if index >= len(buttons):
             logger.error(f"❌ Product index {index} out of range (total: {len(buttons)})")
-            return None
+            return product_name
 
         product_name = self.get_product_name_by_index(index)
         button = buttons[index]
