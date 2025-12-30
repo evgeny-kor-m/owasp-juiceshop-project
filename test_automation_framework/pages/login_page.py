@@ -43,7 +43,7 @@ class LoginPage(BasePage):
             logger.error(f"❌ Failed to open login page: {e}")
             raise
 
-    @allure.step("Enter credentials: email={email}")
+    @allure.step("Enter credentials: username={username}")
     def enter_credentials(self, username: str, password: str):
         """Enters user credentials into username and password fields."""
         logger.info(f"🔑 Entering credentials for user: {username}/****")
