@@ -4,8 +4,11 @@ FROM python:3.12-slim-bookworm
 
 # wget for downloading files, curl for general networking, and openjdk for allure
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    make \
     wget \
     curl \
+    gnupg \
+    unzip \
     openjdk-17-jdk \
     # Clean the APT-GET cache to reduce the size of the image
     && rm -rf /var/lib/apt/lists/*
@@ -23,16 +26,24 @@ RUN wget -O allure.tgz https://github.com/allure-framework/allure2/releases/down
     && ln -s /opt/allure/bin/allure /usr/local/bin/allure \
     && rm allure.tgz
 
-# Installation Google Chrome Stable
-# Required for selenium tests if they use Google Chrome.
-RUN apt-get update && apt-get install -y \
-    gnupg \
-    unzip \
-    && curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg \
-    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
-    && apt-get update && apt-get install -y google-chrome-stable \
+# =========================
+# Google Chrome (for Selenium)
+# =========================
+RUN curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub \
+        | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/google-chrome.gpg] \
+        http://dl.google.com/linux/chrome/deb/ stable main" \
+        > /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends google-chrome-stable \
     && rm -rf /var/lib/apt/lists/*
 
+# =========================
+# Python environment
+# =========================
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
 
 # Устанавливаем рабочую директорию в контейнере
 WORKDIR /app

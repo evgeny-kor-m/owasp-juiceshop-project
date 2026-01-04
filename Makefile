@@ -69,6 +69,7 @@ test-report: ## Run tests and generate Allure report
 	@make clean-all
 	@make test
 	@make allure-start
+	@make allure-report
 
 # ========================================================
 # 🧪 LOCAL TESTING (IntelliJ / Host)
