@@ -69,6 +69,20 @@ test-report: ## Run tests and generate Allure report
 	@make allure-start
 	@make allure-report
 
+ci-test: ## Run tests in CI environment with volume mapping
+	@echo "$(YELLOW)🚀 Running CI tests...$(NC)"
+	docker run --rm \
+		--env-file $(ENV_FILE) \
+		-v $$(pwd)/allure-results:/app/allure-results \
+		-v $$(pwd)/html-reports:/app/html-reports \
+		-v $$(pwd)/logs:/app/logs \
+		$(IMAGE_NAME) \
+		pytest --alluredir=/app/allure-results \
+			   --html=/app/html-reports/report.html \
+			   --json-report --json-report-file=/app/html-reports/json_report.json \
+			   --cov=test_automation_framework --cov-report=html:/app/html-reports/coverage_html
+
+
 # ========================================================
 # 🧪 LOCAL TESTING (IntelliJ / Host)
 # ========================================================

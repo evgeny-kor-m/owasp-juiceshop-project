@@ -43,44 +43,48 @@ jobs:
         env:
           DOCKER_ENV_VARS: ${{ secrets.DOCKER_ENV_VARS }}
 
-      - name: Run tests with Docker Compose
-        run: |
-          # Use your Makefile target to run the tests
-          make test
+      - name: Create report directories
+        run: mkdir -p allure-results html-reports logs allure-reports
+
+      - name: Build Docker Image
+        run: make build  # Use Makefile
+
+      - name: Run CI Tests
+        run: make ci-test # Use Makefile
 
       - name: Upload Allure Results # Upload Allure results as artifacts.
         uses: actions/upload-artifact@v4
         with:
           name: allure-results
-          path: app/allure-results # Path is now correct relative to the root
+          path: allure-results # Path is now correct relative to the root
 
       - name: Upload Allure HTML Report # Upload the generated Allure HTML report as an artifact.
         uses: actions/upload-artifact@v4
         with:
           name: allure-html-report
-          path: app/allure-reports # Path to the generated Allure HTML report
+          path: allure-reports # Path to the generated Allure HTML report
 
       - name: Upload Pytest HTML Report # Upload the Pytest HTML report as artifacts.
         uses: actions/upload-artifact@v4
         with:
           name: pytest-html-report
-          path: app/html-reports/report.html # Path is now correct relative to the root
+          path: html-reports/report.html # Path is now correct relative to the root
 
       - name: Upload Pytest Logs # Upload the Pytest Logs as artifacts.
         uses: actions/upload-artifact@v4
         with:
           name: pytest-logs-report
-          path: app/logs/ # Path is now correct relative to the root
+          path: logs/ # Path is now correct relative to the root
 
       - name: Upload Coverage HTML Report # Upload the coverage HTML report as an artifact.
         uses: actions/upload-artifact@v4
         with:
           name: coverage-html-report
-          path: app/html-reports/coverage_html # Path is now correct relative to the root
+          path: html-reports/coverage_html # Path is now correct relative to the root
 
       - name: Upload JSON Report # Upload the JSON report as an artifact.
         uses: actions/upload-artifact@v4
         with:
           name: json-report
-          path: app/html-reports/json_report.json
+          path: html-reports/json_report.json
 
