@@ -76,7 +76,7 @@ ci-test: ## Run tests in CI environment (GitHub Actions)
 		-v $$(pwd)/logs:/app/logs \
 		$(IMAGE_NAME) \
 		pytest --alluredir=/app/allure-results \
-			   --html=/app/html-reports/report.html \
+			   --html=html-reports/report.html --self-contained-html \
 			   --json-report --json-report-file=/app/html-reports/json_report.json \
 			   --cov=test_automation_framework --cov-report=html:/app/html-reports/coverage_html
 
