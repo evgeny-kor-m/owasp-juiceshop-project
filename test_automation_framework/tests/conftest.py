@@ -26,30 +26,32 @@ def pytest_runtest_makereport(item, call):
     # Handle only failed test executions
     if rep.when == "call" and rep.failed:
         # Get driver if the test provides one (UI tests only)
-        mode = "a" if not hasattr(item, "fixturenames") else "w"
-        driver = getattr(item, "driver", None)
+        is_ui_test = any(mark.name == "ui" for mark in item.iter_markers())
 
-        if driver:
-            try:
-                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                screenshot_filename = f"screenshot_{item.name}_{timestamp}.png"
-                screenshot_path = app_config.SCREENSHOTS_PATH / screenshot_filename
+        if is_ui_test:
+            driver = getattr(item, "driver", None)
 
-                # Save screenshot on disk
-                driver.save_screenshot(str(screenshot_path))
-                logger.info(f"Screenshot saved: {screenshot_path}")
+            if driver:
+                try:
+                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                    screenshot_filename = f"screenshot_{item.name}_{timestamp}.png"
+                    screenshot_path = app_config.SCREENSHOTS_PATH / screenshot_filename
 
-            # Capture screenshot and attach it to Allure
-                allure.attach(
-                    driver.get_screenshot_as_png(),
-                    name=f"screenshot_{item.name}_{timestamp}",
-                    attachment_type=allure.attachment_type.PNG
-                )
-                logging.error(
-                    f"Screenshot for failed test '{item.name}' attached to Allure."
-                )
-            except Exception as e:
-                logging.error(f"Failed to capture screenshot: {e}")
+                    # Save screenshot on disk
+                    driver.save_screenshot(str(screenshot_path))
+                    logger.info(f"Screenshot saved: {screenshot_path}")
+
+                # Capture screenshot and attach it to Allure
+                    allure.attach(
+                        driver.get_screenshot_as_png(),
+                        name=f"{item.name}_{timestamp}",
+                        attachment_type=allure.attachment_type.PNG
+                    )
+                    logger.info(
+                        f"Screenshot for failed test '{item.name}' attached to Allure."
+                    )
+                except Exception as e:
+                    logger.error(f"Failed to capture screenshot: {e}")
 
 @pytest.fixture(scope="session")
 def api_base_url():
