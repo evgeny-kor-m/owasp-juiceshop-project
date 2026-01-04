@@ -71,6 +71,17 @@ test-report: ## Run tests and generate Allure report
 	@make allure-start
 
 # ========================================================
+# 🧪 LOCAL TESTING (IntelliJ / Host)
+# ========================================================
+
+local-test: ## Run pytest locally (for IntelliJ / without Docker)
+	@echo "$(BLUE)🧪 Running tests locally with pytest...$(NC)"
+	@python3 -m pytest \
+		-v \
+		--tb=short \
+		--alluredir=allure-results
+
+# ========================================================
 # ☸️ K3D COMMANDS
 # ========================================================
 k3d-setup: ## Configure and create K3D cluster

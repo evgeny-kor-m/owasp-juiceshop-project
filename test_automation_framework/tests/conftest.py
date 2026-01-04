@@ -1,4 +1,6 @@
 # test_automation_framework/tests/conftest.py
+from datetime import datetime
+
 import pytest
 import allure
 import requests
@@ -29,10 +31,18 @@ def pytest_runtest_makereport(item, call):
 
         if driver:
             try:
-                # Capture screenshot and attach it to Allure
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                screenshot_filename = f"screenshot_{item.name}_{timestamp}.png"
+                screenshot_path = app_config.SCREENSHOTS_PATH / screenshot_filename
+
+                # Save screenshot on disk
+                driver.save_screenshot(str(screenshot_path))
+                logger.info(f"Screenshot saved: {screenshot_path}")
+
+            # Capture screenshot and attach it to Allure
                 allure.attach(
                     driver.get_screenshot_as_png(),
-                    name=f"screenshot_{item.name}",
+                    name=f"screenshot_{item.name}_{timestamp}",
                     attachment_type=allure.attachment_type.PNG
                 )
                 logging.error(
@@ -95,9 +105,9 @@ def browser(request):
 
 def pytest_configure(config):
     """Hook is executed before all tests start"""
-    # os.makedirs(config.SCREENSHOTS_DIR, exist_ok=True)
-    # os.makedirs(config.HTML_REPORTS, exist_ok=True)
+    app_config.ensure_directories()
     app_config.print_config()
+
     logger.info("\n" + "="*50)
     logger.info("PYTEST: All tests execution started")
     logger.info(f"(ENVIRONMENT: {app_config.ENVIRONMENT})")

@@ -5,8 +5,8 @@ services:
     image: ${ALLURE_IMAGE}
     container_name: allure-server-${ENVIRONMENT}
     volumes:
-      - ../${ALLURE_RESULTS_PATH}:/app/allure-results:rw
-      - ../${ALLURE_REPORT_PATH}:/app/allure-reports:rw
+      - ../${ALLURE_RESULTS_DIR}:/app/allure-results:rw
+      - ../${ALLURE_REPORT_DIR}:/app/allure-reports:rw
     environment:
       CHECK_RESULTS_EVERY_SECONDS: ${ALLURE_CHECK_INTERVAL}
       KEEP_HISTORY: ${ALLURE_KEEP_HISTORY}
@@ -32,8 +32,8 @@ services:
       - "${ALLURE_PORT}:80"
     volumes:
       # Монтируем локальный каталог с отчетами внутрь контейнера
-      - ../${ALLURE_REPORT_PATH}:/usr/share/nginx/html/allure:ro
-      - ../${HTML_REPORT_PATH}:/usr/share/nginx/html/reports:ro
+      - ../${ALLURE_REPORT_DIR}:/usr/share/nginx/html/allure:ro
+      - ../${HTML_REPORT_DIR}:/usr/share/nginx/html/reports:ro
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     restart: unless-stopped
 

@@ -19,11 +19,11 @@ services:
           memory: ${MEMORY_RESERVATION}
     volumes:
       - ../:/app
-      - ../${ALLURE_RESULTS_PATH}:/app/allure-results
-      - ../${ALLURE_REPORT_PATH}:/app/allure-reports
-      - ../${HTML_REPORT_PATH}:/app/html-reports
-      - ../${LOGS_PATH}:/app/logs
-      - ../${SCREENSHOTS}:/app/screenshots
+      - ../${ALLURE_RESULTS_DIR}:/app/allure-results
+      - ../${ALLURE_REPORTS_DIR}:/app/allure-reports
+      - ../${HTML_REPORTS_DIR}:/app/html-reports
+      - ../${LOGS_DIR}:/app/logs
+      - ../${SCREENSHOTS_DIR}:/app/screenshots
     extra_hosts:
       - "juice-shop.local:host-gateway" # Mapping Hostname on IP hosts
       - "host.docker.internal:host-gateway"

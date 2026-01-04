@@ -1,5 +1,6 @@
 # test_api_juceshop.py
 import logging
+import pytest
 from test_automation_framework.api.api_service import AuthAPI, BasketAPI, generate_random_email
 from test_automation_framework.base.base_test import BaseTest
 
@@ -7,6 +8,8 @@ logger = logging.getLogger(__name__)
 
 class TestJuiceShopE2E(BaseTest):
 
+    @pytest.mark.api
+    @pytest.mark.smoke
     def test_full_e2e_flow_with_api(self):
         """
         Testing the full End-to-End flow using the API.
