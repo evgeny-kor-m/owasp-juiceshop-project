@@ -16,22 +16,21 @@ DOCKER_DIR = docker
 MAIN_COMPOSE = $(DOCKER_DIR)/docker-compose.yml
 ALLURE_COMPOSE = $(DOCKER_DIR)/allure-compose.yml
 ENV_FILE := .env
-include $(ENV_FILE)
-export $(shell sed 's/=.*//' $(ENV_FILE))
+
+ifeq (,$(wildcard $(ENV_FILE)))
+    $(error .env file not found! Please create it from .env.example)
+else
+    # Include variables from .env into Makefile
+    include $(ENV_FILE)
+    export  # Export all Makefile variables to shell commands
+endif
+
 
 # Variables
 K3D_CLUSTER = test-lab
 IMAGE_NAME = test-runner:latest
 CONTAINER_NAME = test-runner
 
-# Checking if exists .env file
-define check_env
-	@if [ ! -f $(ENV_FILE) ]; then \
-		echo "$(RED)❌ File  $(ENV_FILE) not found!$(NC)"; \
-		echo "$(YELLOW)💡 Copy example: cp $(DOCKER_DIR)/.env.example $(ENV_FILE)$(NC)"; \
-		exit 1; \
-	fi
-endef
 
 # ========================================================
 # 🧭 HELP
@@ -60,7 +59,6 @@ run: ## Run container interactively (auto remove after exit)
 	docker compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) run --rm $(CONTAINER_NAME)
 
 test: ## Run tests in Docker
-	$(call check_env)
 	@echo "$(BLUE)🚀 Running tests inside container...$(NC)"
 	@docker compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) up --build
 
