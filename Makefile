@@ -154,6 +154,7 @@ clean-all: ## Full cleanup (containers, images, volumes)
 	docker compose -f $(ALLURE_COMPOSE) down --volumes --remove-orphans --rmi all
 	docker system prune -f
 	@make clean
+	sudo rm -rf $(HTML_REPORTS_DIR) $(SCREENSHOTS_DIR) $(ALLURE_RESULTS_DIR) $(ALLURE_REPORTS_DIR) $(LOGS_DIR) || true
 
 clean: ## Remove test artifacts and cache
 	@echo "$(YELLOW)🧹 Cleaning project folders...$(NC)"
