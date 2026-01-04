@@ -73,6 +73,7 @@ ci-test: ## Run tests in CI environment with volume mapping
 	@echo "$(YELLOW)🚀 Running CI tests...$(NC)"
 	docker run --rm \
 		--env-file $(ENV_FILE) \
+		--add-host=host.docker.internal:host-gateway \
 		-v $$(pwd)/allure-results:/app/allure-results \
 		-v $$(pwd)/html-reports:/app/html-reports \
 		-v $$(pwd)/logs:/app/logs \
