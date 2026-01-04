@@ -37,8 +37,12 @@ endef
 # 🧭 HELP
 # ========================================================
 help: ## Show available commands and descriptions
+#	@echo "$(BLUE)Available commands:$(NC)"
+#	@grep -E '^[a-zA-Z0-9_-]+:.*?## ' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo "$(BLUE)Available commands:$(NC)"
-	@grep -E '^[a-zA-Z0-9_-]+:.*?## ' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
+	@grep -hE '^[a-zA-Z0-9_-]+:.*## ' $(MAKEFILE_LIST) \
+	| awk 'BEGIN {FS=":.*## "}; {printf "  %-20s %s\n", $$1, $$2}'
+
 
 # ========================================================
 # 🏗️ BASIC TASKS
@@ -189,3 +193,4 @@ allure-report: ## Generate new Allure report from results
 	else \
 		echo "$(YELLOW)ℹ️ Please open manually: http://localhost:$(ALLURE_PORT)/allure/$(NC)"; \
 	fi
+
