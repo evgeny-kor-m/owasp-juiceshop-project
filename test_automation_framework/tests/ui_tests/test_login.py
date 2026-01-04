@@ -8,6 +8,9 @@ logger = logging.getLogger(__name__)
 
 class TestJuiceShopLoginUI(BaseUITest):
     #@pytest.mark.skip
+    @pytest.mark.ui
+    @pytest.mark.login
+    @pytest.mark.smoke
     def test_user_login(self):
 
         # Создаем экземпляр Page Object

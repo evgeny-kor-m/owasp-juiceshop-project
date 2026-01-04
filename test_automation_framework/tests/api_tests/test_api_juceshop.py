@@ -10,10 +10,9 @@ class TestJuiceShopE2E(BaseTest):
 
     @pytest.mark.api
     @pytest.mark.smoke
+    @pytest.mark.e2e
     def test_full_e2e_flow_with_api(self):
-        """
-        Testing the full End-to-End flow using the API.
-        """
+        """        Testing the full End-to-End flow using the API.         """
         logger.info("--- Starting E2E Test for OWASP Juice Shop (with API) ---")
 
         # Step 1: Register a new user
