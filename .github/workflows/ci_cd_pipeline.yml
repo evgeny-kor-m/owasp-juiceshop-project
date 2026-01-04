@@ -53,36 +53,42 @@ jobs:
         run: make ci-test # Use Makefile
 
       - name: Upload Allure Results # Upload Allure results as artifacts.
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-results
           path: allure-results # Path is now correct relative to the root
 
       - name: Upload Allure HTML Report # Upload the generated Allure HTML report as an artifact.
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-html-report
           path: allure-reports # Path to the generated Allure HTML report
 
       - name: Upload Pytest HTML Report # Upload the Pytest HTML report as artifacts.
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: pytest-html-report
           path: html-reports/report.html # Path is now correct relative to the root
 
       - name: Upload Pytest Logs # Upload the Pytest Logs as artifacts.
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: pytest-logs-report
           path: logs/ # Path is now correct relative to the root
 
       - name: Upload Coverage HTML Report # Upload the coverage HTML report as an artifact.
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: coverage-html-report
           path: html-reports/coverage_html # Path is now correct relative to the root
 
       - name: Upload JSON Report # Upload the JSON report as an artifact.
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: json-report
