@@ -31,7 +31,7 @@ jobs:
     timeout-minutes: 20 # Increase the timeout for the entire job to 20 minutes.
     # ADDED: Explicitly provide read permission for the repository contents
     permissions:
-      contents: read # Required for actions/checkout
+      contents: write # Required for gh-pages (actions/checkout)
 
     steps:
       - name: Checkout repository # Step to clone the code from the repository.
@@ -43,54 +43,49 @@ jobs:
         env:
           DOCKER_ENV_VARS: ${{ secrets.DOCKER_ENV_VARS }}
 
-      - name: Create report directories
-        run: mkdir -p allure-results html-reports logs allure-reports
-
       - name: Build Docker Image
         run: make build  # Use Makefile
 
       - name: Run CI Tests
         run: make ci-test # Use Makefile
 
-      - name: Upload Allure Results # Upload Allure results as artifacts.
+      - name: Get Allure history
+        uses: actions/checkout@v4
         if: always()
-        uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
-          name: allure-results
-          path: allure-results # Path is now correct relative to the root
+          ref: gh-pages
+          path: gh-pages
 
-      - name: Upload Allure HTML Report # Upload the generated Allure HTML report as an artifact.
+      - name: Generate Allure Report
+        uses: simple-elf/allure-report-action@master
         if: always()
-        uses: actions/upload-artifact@v4
+        id: allure-report
         with:
-          name: allure-html-report
-          path: allure-reports # Path to the generated Allure HTML report
+          allure_results: allure-results
+          gh_pages: gh-pages
+          allure_report: allure-report
+          allure_history: allure-history
+          keep_reports: 5
 
-      - name: Upload Pytest HTML Report # Upload the Pytest HTML report as artifacts.
+      - name: Deploy Allure Report to GitHub Pages
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          name: pytest-html-report
-          path: html-reports/report.html # Path is now correct relative to the root
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
 
-      - name: Upload Pytest Logs # Upload the Pytest Logs as artifacts.
+      - name: Upload Static Artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: pytest-logs-report
-          path: logs/ # Path is now correct relative to the root
-
-      - name: Upload Coverage HTML Report # Upload the coverage HTML report as an artifact.
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-html-report
-          path: html-reports/coverage_html # Path is now correct relative to the root
-
-      - name: Upload JSON Report # Upload the JSON report as an artifact.
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: json-report
-          path: html-reports/json_report.json
+          name: full-test-artifacts
+          path: |
+            allure-reports
+            allure-results
+            html-reports/report.html
+            logs
+            html-reports/coverage_html
+            html-reports/json_report.json
 

@@ -17,13 +17,8 @@ MAIN_COMPOSE = $(DOCKER_DIR)/docker-compose.yml
 ALLURE_COMPOSE = $(DOCKER_DIR)/allure-compose.yml
 ENV_FILE := .env
 
-ifeq (,$(wildcard $(ENV_FILE)))
-    $(error .env file not found! Please create it from .env.example)
-else
-    # Include variables from .env into Makefile
-    include $(ENV_FILE)
-    export  # Export all Makefile variables to shell commands
-endif
+-include $(ENV_FILE)
+export
 
 
 # Variables
@@ -69,8 +64,10 @@ test-report: ## Run tests and generate Allure report
 	@make allure-start
 	@make allure-report
 
-ci-test: ## Run tests in CI environment with volume mapping
-	@echo "$(YELLOW)🚀 Running CI tests...$(NC)"
+ci-test: ## Run tests in CI environment (GitHub Actions)
+	@echo "$(YELLOW)🚀 Preparing directories for artifacts...$(NC)"
+	mkdir -p allure-results allure-reports screenshots html-reports logs
+	@echo "$(YELLOW)🚀 Running CI tests with host.docker.internal fix...$(NC)"
 	docker run --rm \
 		--env-file $(ENV_FILE) \
 		--add-host=host.docker.internal:host-gateway \
