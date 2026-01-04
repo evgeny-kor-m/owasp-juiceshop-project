@@ -17,9 +17,9 @@ htmlcov/
 
 # Logs and reports
 logs/
-reports/
+html-reports/
 allure-results/
-allure-report/
+allure-reports/
 screenshots/
 *.log
 *.tmp

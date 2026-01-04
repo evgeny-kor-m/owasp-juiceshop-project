@@ -4,7 +4,6 @@ FROM python:3.12-slim-bookworm
 
 # wget for downloading files, curl for general networking, and openjdk for allure
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    make \
     wget \
     curl \
     gnupg \
