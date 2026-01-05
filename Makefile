@@ -17,9 +17,10 @@ MAIN_COMPOSE = $(DOCKER_DIR)/docker-compose.yml
 ALLURE_COMPOSE = $(DOCKER_DIR)/allure-compose.yml
 ENV_FILE := .env
 
--include $(ENV_FILE)
-export
-
+ifneq ("$(wildcard $(ENV_FILE))","")
+    include $(ENV_FILE)
+    export
+endif
 
 # Variables
 K3D_CLUSTER = test-lab
@@ -67,6 +68,7 @@ test-report: ## Run tests and generate Allure report
 ci-test: ## Run tests in CI environment (GitHub Actions)
 	@echo "$(YELLOW)🚀 Preparing directories for artifacts...$(NC)"
 	mkdir -p allure-results allure-reports screenshots html-reports logs
+	chmod -R 777 allure-results allure-reports screenshots html-reports logs
 	@echo "$(YELLOW)🚀 Running CI tests with host.docker.internal fix...$(NC)"
 	docker compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) run --rm $(CONTAINER_NAME) \
     	pytest --alluredir=/app/allure-results \
