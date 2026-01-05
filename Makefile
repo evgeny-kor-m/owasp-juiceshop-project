@@ -68,18 +68,11 @@ ci-test: ## Run tests in CI environment (GitHub Actions)
 	@echo "$(YELLOW)🚀 Preparing directories for artifacts...$(NC)"
 	mkdir -p allure-results allure-reports screenshots html-reports logs
 	@echo "$(YELLOW)🚀 Running CI tests with host.docker.internal fix...$(NC)"
-	docker run --rm \
-		--env-file $(ENV_FILE) \
-		--add-host=host.docker.internal:host-gateway \
-		-v $$(pwd)/allure-results:/app/allure-results \
-		-v $$(pwd)/html-reports:/app/html-reports \
-		-v $$(pwd)/logs:/app/logs \
-		$(IMAGE_NAME) \
-		pytest --alluredir=/app/allure-results \
-			   --html=html-reports/report.html --self-contained-html \
-			   --json-report --json-report-file=/app/html-reports/json_report.json \
-			   --cov=test_automation_framework --cov-report=html:/app/html-reports/coverage_html
-
+	docker compose -f $(MAIN_COMPOSE) --env-file $(ENV_FILE) run --rm $(CONTAINER_NAME) \
+    	pytest --alluredir=/app/allure-results \
+    		   --html=/app/html-reports/report.html --self-contained-html \
+    		   --json-report --json-report-file=/app/html-reports/json_report.json \
+    		   --cov=test_automation_framework --cov-report=html:/app/html-reports/coverage_html
 
 # ========================================================
 # 🧪 LOCAL TESTING (IntelliJ / Host)

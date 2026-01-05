@@ -1,5 +1,5 @@
 # .github/workflows/ci_cd_pipeline.yml
-name: Testing
+name: testing_ci_cd_pipeline
 
 on:
 
