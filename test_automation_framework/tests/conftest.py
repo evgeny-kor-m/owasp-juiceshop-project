@@ -1,6 +1,7 @@
 # test_automation_framework/tests/conftest.py
 import base64
 import os
+import time
 from datetime import datetime
 
 import pytest
@@ -171,3 +172,43 @@ def pytest_unconfigure(config):
         logger.warning("log file already closed by pytest")
         # Игнорируем ошибку, если логгер уже закрыт pytest-ом
         pass
+
+@pytest.fixture(scope="session", autouse=True)
+def wait_for_app_ready():
+    """
+    CI-safe healthcheck.
+    Blocks test execution until the application becomes reachable.
+    """
+
+    web_base_url = os.getenv("WEB_BASE_URL")
+    assert web_base_url, "WEB_BASE_URL is not set"
+
+    # IMPORTANT: do NOT use /#/login for healthcheck
+    # Hash URLs are client-side only
+    health_url = web_base_url.rstrip("/")
+
+    timeout = 90
+    interval = 3
+    end_time = time.time() + timeout
+
+    logger.info(f"🔎 Waiting for application to be ready: {health_url}")
+
+    last_error = None
+
+    while time.time() < end_time:
+        try:
+            response = requests.get(health_url, timeout=5)
+            if response.status_code < 500:
+                logger.info("✅ Application is reachable")
+                return
+        except Exception as e:
+            last_error = e
+
+        time.sleep(interval)
+
+    pytest.exit(
+        f"❌ Application is not reachable after {timeout}s\n"
+        f"URL: {health_url}\n"
+        f"Last error: {last_error}",
+        returncode=1
+    )
