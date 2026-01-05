@@ -1,4 +1,5 @@
 import logging
+import os
 from datetime import datetime
 from pathlib import Path
 from test_automation_framework.config.config import Config
@@ -11,6 +12,9 @@ def setup_logging():
     log_dir = Path(Config.LOGS_PATH)
     log_level_str = Config.LOG_LEVEL.upper()
     log_level = getattr(logging, log_level_str, logging.INFO)
+
+    if not log_dir.exists():
+        os.makedirs(log_dir, exist_ok=True)
 
     timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
     log_file_name = f"test_run_{timestamp}.log"

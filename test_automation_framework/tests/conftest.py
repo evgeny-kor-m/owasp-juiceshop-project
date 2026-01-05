@@ -1,4 +1,6 @@
 # test_automation_framework/tests/conftest.py
+import base64
+import os
 from datetime import datetime
 
 import pytest
@@ -29,7 +31,7 @@ def pytest_runtest_makereport(item, call):
         is_ui_test = any(mark.name == "ui" for mark in item.iter_markers())
 
         if is_ui_test:
-            driver = getattr(item, "driver", None)
+            driver = item.funcargs.get("browser")
 
             if driver:
                 try:
@@ -41,17 +43,51 @@ def pytest_runtest_makereport(item, call):
                     driver.save_screenshot(str(screenshot_path))
                     logger.info(f"Screenshot saved: {screenshot_path}")
 
-                # Capture screenshot and attach it to Allure
+                    screenshot_png = driver.get_screenshot_as_png()
+                    # Capture screenshot and attach it to Allure
                     allure.attach(
-                        driver.get_screenshot_as_png(),
+                        screenshot_png,
                         name=f"{item.name}_{timestamp}",
                         attachment_type=allure.attachment_type.PNG
                     )
-                    logger.info(
-                        f"Screenshot for failed test '{item.name}' attached to Allure."
-                    )
+                    logger.info(f"Screenshot for failed test '{item.name}' attached to Allure.")
+
+                    # 2. Save the screenshot in base64 inside the report object for pytest-html
+                    rep._html_screenshot = base64.b64encode(screenshot_png).decode("utf-8")
+
                 except Exception as e:
                     logger.error(f"Failed to capture screenshot: {e}")
+
+@pytest.hookimpl(optionalhook=True)
+def pytest_html_results_table_html(report, data):
+    """ Official pytest-html hook for modifying results table cells.
+        Inserts a screenshot from the previously saved _html_screenshot attribute.  """
+    screenshot = getattr(report, "_html_screenshot", None)
+    if screenshot:
+        # Add the screenshot's HTML code to the report data list
+        html = f"""
+        <div style="margin: 10px 0;">
+            <style>
+                .screenshot-img {{
+                    width: 600px; 
+                    border: 2px solid #444; 
+                    border-radius: 8px; 
+                    cursor: zoom-in;
+                    transition: transform 0.2s;
+                    display: block;
+                }}
+                .screenshot-img:hover {{
+                    transform: scale(1.02);
+                    border-color: #007bff;
+                }}
+            </style>
+            <img src="data:image/png;base64,{screenshot}" 
+                 class="screenshot-img"
+                 onclick="window.open(this.src)" 
+                 title="Press to open full size"/>
+        </div>
+        """
+        data.append(html)
 
 @pytest.fixture(scope="session")
 def api_base_url():
@@ -114,6 +150,15 @@ def pytest_configure(config):
     logger.info("PYTEST: All tests execution started")
     logger.info(f"(ENVIRONMENT: {app_config.ENVIRONMENT})")
     logger.info("="*50)
+
+    if os.path.exists('/.dockerenv'):
+        print("🚀 Running inside DOCKER container")
+    else:
+        print("💻 Running LOCALLY (Host machine)")
+
+    # Заголовок для HTML отчета
+    if hasattr(config, "_metadata"):
+        config._metadata['Project Name'] = 'Juice Shop UI Automation'
 
 
 def pytest_unconfigure(config):
