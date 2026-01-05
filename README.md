@@ -2,6 +2,7 @@ Test Automation with Docker
 This project is a template for test automation using Docker, pytest, and Allure. It allows you to run tests in an isolated container and generate detailed reports.
 
 Project Structure
+tree -L 3 test_automation_framework
 .
 ├── Makefile                     # Script for automating commands
 ├── README.md                    # This file
