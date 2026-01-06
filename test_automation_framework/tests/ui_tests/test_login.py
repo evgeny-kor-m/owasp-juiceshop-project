@@ -31,7 +31,7 @@ class TestJuiceShopLoginUI(BaseUITest):
     #@pytest.mark.skip
     @pytest.mark.ui
     @pytest.mark.login
-    @pytest.mark.xfail
+#    @pytest.mark.xfail
     def test_wrong_user_login(self):
 
         # Создаем экземпляр Page Object
