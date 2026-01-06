@@ -28,6 +28,10 @@ class Config:
 
     # Timeout settings
     DEFAULT_TIMEOUT = 10  # seconds
+    DEFAULT_WAIT = 15
+    SHORT_WAIT = 3
+    LONG_WAIT = 30
+
 
     @classmethod
     def ensure_directories(cls):

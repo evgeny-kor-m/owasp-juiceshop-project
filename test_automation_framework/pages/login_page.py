@@ -22,6 +22,7 @@ class LoginPage(BasePage):
     USERNAME_INPUT = (By.ID, "email")
     PASSWORD_INPUT = (By.ID, "password")
     LOGIN_BUTTON = (By.ID, "loginButton")
+
     ACCOUNT_BUTTON = (By.CSS_SELECTOR, "button[aria-label='Show/hide account menu']")
 
     def __init__(self, driver, base_url):

@@ -212,3 +212,15 @@ def wait_for_app_ready():
         f"Last error: {last_error}",
         returncode=1
     )
+
+def pytest_runtest_setup(item):
+    """Hook: before each test setup"""
+    print(f" [HOOK] Test setup: {item.name}")
+
+def pytest_runtest_teardown(item):
+    """Hook: after each test teardown"""
+    print(f" [HOOK] Test completion: {item.name}")
+
+def pytest_collection_modifyitems(items):
+    """Hook: after collecting all tests"""
+    print(f"\n[HOOK] Tests collected: {len(items)}")
