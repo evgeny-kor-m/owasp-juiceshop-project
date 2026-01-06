@@ -43,11 +43,14 @@ jobs:
         env:
           DOCKER_ENV_VARS: ${{ secrets.DOCKER_ENV_VARS }}
 
-      - name: Build Docker Image
-        run: make build  # Use Makefile
+#      - name: Build Docker Image
+#        run: make build  # Use Makefile
+#
+#      - name: Run CI Tests
+#        run: make ci-test # Use Makefile
 
-      - name: Run CI Tests
-        run: make ci-test # Use Makefile
+      - name: Build Docker Image
+        run: make test
 
       - name: Install Allure CLI
         if: always()
